@@ -239,11 +239,27 @@ input:checked+.tslider:before{transform:translateX(16px)}
           </div>
           <div class="row col2">
             <div class="field"><label>Rito</label><select><option>Selecione</option><option>Comum</option><option>Sumaríssimo</option></select></div>
-            <div class="field"><label>Tipo do réu</label><select><option>Público</option><option>Privado — Concordância</option><option>Privado — Discordância</option></select></div>
+            <div class="field"><label>Tipo do réu</label>
+              <select id="tipo-reu" onchange="updateFaseProcessual()">
+                <option value="">Selecione</option>
+                <option value="publico">Público</option>
+                <option value="privado_concordancia">Privado — Concordância</option>
+                <option value="privado_discordancia">Privado — Discordância</option>
+              </select>
+            </div>
           </div>
           <div class="row col3">
             <div class="field"><label>UF</label><select><option>AM</option><option>SP</option><option>RJ</option><option>MG</option></select></div>
             <div class="field"><label>ID iiLex</label><input type="text" placeholder="Cadastrar no iiLex"/></div>
+            <div></div>
+          </div>
+          <div class="row col2" style="margin-top:4px">
+            <div class="field">
+              <label>Fase processual</label>
+              <select id="fase-processual">
+                <option value="">Selecione o tipo do réu primeiro</option>
+              </select>
+            </div>
             <div></div>
           </div>
         </div>
@@ -467,7 +483,7 @@ function addCredit(){
     '<div id="'+id+'-error" style="display:none;background:#FFF0F0;border:1px solid #F09595;border-radius:6px;padding:8px 12px;font-size:12px;color:#A32D2D;margin-bottom:10px"></div>'+
     '<div class="row col2">'+
       '<div class="field"><label>Cedente</label><select><option value="">Selecione</option><option>Amélia Mascarenhas</option><option>João Silva</option><option>Maria Oliveira</option></select></div>'+
-      '<div class="field"><label>Tipo de crédito</label><select>'+tipoOpts()+'</select></div>'+
+      '<div class="field"><label>Tipo de crédito</label><select onchange="updateFaseProcessual()">'+tipoOpts()+'</select></div>'+
     '</div>'+
     '<div class="row col2">'+
       '<div class="field">'+
@@ -486,23 +502,6 @@ function addCredit(){
             '<div class="ms-opt" id="'+id+'-mod-opt-df" onclick="toggleModOpt(\''+id+'\',\'desagio_flex\',this)"><input type="checkbox" id="'+id+'-chk-df" onclick="event.stopPropagation()"/> <span>Deságio flexível</span></div>'+
           '</div>'+
         '</div>'+
-      '</div>'+
-      '<div class="field">'+
-        '<label>Fase processual</label>'+
-        '<select>'+
-          '<option value="">Selecione</option>'+
-          '<option>1. Feita petição inicial de execução (autor)</option>'+
-          '<option>2. Feita a impugnação (executado)</option>'+
-          '<option>3. Feita a manifestação (autor)</option>'+
-          '<option>4. Sentença proferida</option>'+
-          '<option>5. Recurso apresentado</option>'+
-          '<option>6. Acórdão proferido</option>'+
-          '<option>7.1 Cálculo homologado, ainda sem petição</option>'+
-          '<option>7.2 Cálculo homologado, já com petição</option>'+
-          '<option>8. Feito o mandado de expedição de RPV / Alvará</option>'+
-          '<option>8.1 Apresentado ofício requisitório (demonstrativo RPV)</option>'+
-          '<option>9. RPV / Alvará expedido</option>'+
-        '</select>'+
       '</div>'+
     '</div>'+
     '<div id="'+id+'-df-wrap" style="display:none" class="expand-info" >'+
@@ -634,9 +633,10 @@ function rcCredit(id){
   setI(id+'-ded', ded>=0?brl(ded):'');
   setI(id+'-dep', dep>=0?brl(dep):'');
   setI(id+'-total', tot>=0?brl(tot):'');
-  // deságio flexível por crédito
+  // deságio flexível por crédito — verifica se o checkbox existe e está marcado
   var chkDf=document.getElementById(id+'-chk-df');
-  if(chkDf&&chkDf.checked){
+  var dfAtivo=chkDf?chkDf.checked:false;
+  if(dfAtivo){
     var dfPctRaw=document.getElementById(id+'-df-pct');
     var dfPct=dfPctRaw?parseFloat(dfPctRaw.value.replace(',','.'))||0:0;
     var dfDep=tot*(1-dfPct/100);
@@ -1045,6 +1045,100 @@ function updateSum(){
   setT('sv-saldo',brl(saldo));
   var saldoEl=document.getElementById('sv-saldo');
   if(saldoEl)saldoEl.style.color=saldo<=0?'#27500A':'#A32D2D';
+}
+
+// ── FASES PROCESSUAIS ─────────────────────────────────────────
+var FASES={
+  publico:[
+    '1. Feita petição inicial de execução (autor)',
+    '2. Feita a impugnação (executado)',
+    '3. Feita a manifestação (autor)',
+    '4. Sentença proferida',
+    '5. Recurso apresentado',
+    '6. Acórdão proferido',
+    '7.1. Cálculo homologado, ainda sem petição',
+    '7.2. Cálculo homologado, já com petição',
+    '8. Feito o mandado de expedição de RPV / Alvará',
+    '8.1 Apresentado ofício requisitório (demonstrativo RPV)',
+    '9. RPV / Alvará expedido'
+  ],
+  privado_concordancia:[
+    '1. Feita petição inicial de execução (autor) / Feito Depósito (executado)',
+    '2. Decisão - Recebimento da Execução / Decisão - Intimação Autor do Depósito',
+    'Concordância - 3. Depósito (executado) / Concordância autor',
+    'Concordância - 4. Sentença proferida',
+    'Concordância - 5. Petição de Alvará',
+    'Concordância - 6. Decisão de Extinção e Determinado o Alvará',
+    'Concordância - 7. Alvará expedido'
+  ],
+  privado_discordancia:[
+    '1. Feita petição inicial de execução (autor) / Feito Depósito (executado)',
+    '2. Decisão - Recebimento da Execução / Decisão - Intimação Autor do Depósito',
+    'Discordância - 3. Depósito em Garantia (executado) / Impugnação iniciando execução do excedente (autor)',
+    'Discordância - 4. Feita a impugnação (executado)',
+    'Discordância - 5. Sentença proferida',
+    'Discordância - 6. Recurso apresentado',
+    'Discordância - 7. Acórdão proferido',
+    'Discordância - 8.1. Petição de Alvará com ou sem pedido de Remanescente',
+    'Discordância - 8.2. Concordância do Devedor e depósito complementar',
+    'Discordância - 9. Decisão de Extinção e Determinado o Alvará',
+    'Discordância - 10. Alvará expedido'
+  ],
+  pericial:[
+    'Fase 1 - Nomeação do perito',
+    'Fase 2 - Decisão homologando valor do perito',
+    'Fase 3 - Perícia agendada',
+    'Fase 4 - Laudo entregue',
+    'Fase 5 (Concordância) - Concordância com o laudo',
+    'Fase 6 (Concordância) - Decisão homologando o laudo',
+    'Fase 7 (Concordância) - Petição de expedição alvará/RPV',
+    'Fase 8 (Concordância) - RPV expedido',
+    'Fase 9 (Concordância) - Alvará expedido',
+    'Fase 5 (Discordância) - Impugnação do laudo',
+    'Fase 6 (Discordância) - Laudo complementar',
+    'Fase 7 (Discordância) - Manifestação das partes/decisão homologando o laudo',
+    'Fase 8 (Discordância) - Petição de expedição alvará/RPV',
+    'Fase 9 (Discordância) - RPV expedido',
+    'Fase 10 (Discordância) - Alvará expedido'
+  ]
+};
+
+function updateFaseProcessual(){
+  var tipoReu=document.getElementById('tipo-reu');
+  var faseSelect=document.getElementById('fase-processual');
+  if(!tipoReu||!faseSelect)return;
+  var tr=tipoReu.value;
+
+  // detecta se há crédito pericial selecionado nos créditos do Comercial
+  var temPericial=false;
+  document.querySelectorAll('#credits-list .credit-item').forEach(function(item){
+    var tipoSel=item.querySelectorAll('select')[1];
+    if(tipoSel&&tipoSel.value==='Honorários Periciais') temPericial=true;
+  });
+
+  var lista=[];
+  if(temPericial){
+    lista=FASES.pericial;
+  } else if(tr==='publico'){
+    lista=FASES.publico;
+  } else if(tr==='privado_concordancia'){
+    lista=FASES.privado_concordancia;
+  } else if(tr==='privado_discordancia'){
+    lista=FASES.privado_discordancia;
+  }
+
+  var current=faseSelect.value;
+  faseSelect.innerHTML='<option value="">Selecione</option>';
+  if(lista.length===0){
+    faseSelect.innerHTML='<option value="">Selecione o tipo do réu primeiro</option>';
+    return;
+  }
+  lista.forEach(function(f){
+    var opt=document.createElement('option');
+    opt.value=f; opt.textContent=f;
+    if(f===current) opt.selected=true;
+    faseSelect.appendChild(opt);
+  });
 }
 
 // inicia com 1 crédito

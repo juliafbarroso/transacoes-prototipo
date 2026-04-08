@@ -158,6 +158,9 @@ input:checked+.tslider:before{transform:translateX(16px)}
 .ms-none{padding:10px 12px;font-size:12px;color:#aaa;font-style:italic}
 .ms-ir-note{background:#f5f5f3;border-radius:6px;padding:8px 10px;font-size:12px;color:#666;margin-top:8px;display:flex;align-items:center;gap:6px}
 .ms-ir-note svg{flex-shrink:0;color:#999}
+.modelo-wrap{border:1px solid #d5d5d0;border-radius:6px;padding:8px 12px;background:#fff;display:flex;flex-direction:column;gap:6px}
+.modelo-chk{display:flex;align-items:center;gap:8px;font-size:13px;color:#333;cursor:pointer;user-select:none}
+.modelo-chk input[type=checkbox]{width:14px;height:14px;accent-color:#1558A0;cursor:pointer;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -234,15 +237,14 @@ input:checked+.tslider:before{transform:translateX(16px)}
             <div class="field"><label>Tribunal de tramitação</label><input type="text" value="TJAM"/></div>
             <div class="field"><label>Unidade judiciária</label><input type="text" value="3ª Unidade — Previdenciário"/></div>
           </div>
-          <div class="row col3">
+          <div class="row col2">
             <div class="field"><label>Rito</label><select><option>Selecione</option><option>Comum</option><option>Sumaríssimo</option></select></div>
-            <div class="field"><label>Fase do processo</label><input type="text" value="Cálculo homologado"/></div>
-            <div class="field"><label>Modelo de transação</label><select><option>Não aguarda homologação</option><option>Aguarda homologação</option></select></div>
+            <div class="field"><label>Tipo do réu</label><select><option>Público</option><option>Privado — Concordância</option><option>Privado — Discordância</option></select></div>
           </div>
           <div class="row col3">
-            <div class="field"><label>Tipo do réu</label><select><option>Público</option><option>Privado — Concordância</option><option>Privado — Discordância</option></select></div>
             <div class="field"><label>UF</label><select><option>AM</option><option>SP</option><option>RJ</option><option>MG</option></select></div>
             <div class="field"><label>ID iiLex</label><input type="text" placeholder="Cadastrar no iiLex"/></div>
+            <div></div>
           </div>
         </div>
       </div>
@@ -318,28 +320,8 @@ input:checked+.tslider:before{transform:translateX(16px)}
             <label class="chk-row"><input type="checkbox"/> Fase avançada sem incremento</label>
             <label class="chk-row"><input type="checkbox"/> Réu fora da política padrão</label>
             <label class="chk-row"><input type="checkbox"/> Réu revel</label>
-            <label class="chk-row"><input type="checkbox" id="chkDF" onchange="toggleDF()"/> Deságio flexível</label>
             <label class="chk-row"><input type="checkbox" id="chkParc" onchange="toggleParc()"/> Parceria</label>
-          </div>
-
-          <div id="df-block" style="display:none" class="expand-info">
-            <div class="expand-info-title">Regra deságio flexível</div>
-            <div class="row col2">
-              <div class="field"><label>Prazo liquidação (meses)</label><input type="number" id="df-prazo" value="3" min="0" oninput="recalcDF()"/></div>
-              <div class="field"><label>Data limite da liquidação</label><input class="calc" type="text" id="df-data-lim" placeholder="Calculada automaticamente"/></div>
-            </div>
-            <div class="row col4">
-              <div class="field"><label>Deságio flexível (%)</label><input type="text" inputmode="decimal" id="df-pct" value="25" placeholder="0%" oninput="maskPct(this);recalcDF()" onblur="blurPct(this);recalcDF()"/></div>
-              <div class="field"><label>Depósito final com deságio flexível</label><input class="calc" type="text" id="df-dep-flex" placeholder="R$ 0,00"/></div>
-              <div class="field"><label>Receita JusCash com deságio flexível</label><input class="calc" type="text" id="df-receita-flex" placeholder="R$ 0,00"/></div>
-              <div class="field"><label>Valor a devolver ao cliente</label><input class="calc hilite" type="text" id="df-devolucao" placeholder="R$ 0,00" readonly/></div>
-            </div>
-            <div class="row col2">
-              <div class="field"><label>Status</label>
-                <select><option>Selecione</option><option>No prazo</option><option>Devolver</option><option>Devolvido</option><option>Vencido</option></select>
-              </div>
-              <div></div>
-            </div>
+            <div></div>
           </div>
 
           <div id="parc-block" style="display:none" class="expand-warn">
@@ -487,6 +469,59 @@ function addCredit(){
       '<div class="field"><label>Cedente</label><select><option value="">Selecione</option><option>Amélia Mascarenhas</option><option>João Silva</option><option>Maria Oliveira</option></select></div>'+
       '<div class="field"><label>Tipo de crédito</label><select>'+tipoOpts()+'</select></div>'+
     '</div>'+
+    '<div class="row col2">'+
+      '<div class="field">'+
+        '<label>Modelo de transação</label>'+
+        '<div class="ms-wrap" id="'+id+'-mod-wrap">'+
+          '<div class="ms-trigger" id="'+id+'-mod-trigger" onclick="toggleModMs(\''+id+'\')">'+
+            '<span class="placeholder" id="'+id+'-mod-ph">Selecione</span>'+
+          '</div>'+
+          '<svg class="ms-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l4 4 4-4"/></svg>'+
+          '<div class="ms-dropdown" id="'+id+'-mod-dd">'+
+            '<div class="ms-opt" onclick="toggleModOpt(\''+id+'\',\'nao_aguarda\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Não aguarda homologação</span></div>'+
+            '<div class="ms-opt" onclick="toggleModOpt(\''+id+'\',\'aguarda_homologacao\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Aguarda homologação</span></div>'+
+            '<div class="ms-opt" onclick="toggleModOpt(\''+id+'\',\'aguarda_habilitacao\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Aguarda habilitação</span></div>'+
+            '<div class="ms-opt" onclick="toggleModOpt(\''+id+'\',\'simples\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Simples (normal total)</span></div>'+
+            '<div class="ms-opt" onclick="toggleModOpt(\''+id+'\',\'modelo50\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Modelo 50%</span></div>'+
+            '<div class="ms-opt" id="'+id+'-mod-opt-df" onclick="toggleModOpt(\''+id+'\',\'desagio_flex\',this)"><input type="checkbox" id="'+id+'-chk-df" onclick="event.stopPropagation()"/> <span>Deságio flexível</span></div>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="field">'+
+        '<label>Fase processual</label>'+
+        '<select>'+
+          '<option value="">Selecione</option>'+
+          '<option>1. Feita petição inicial de execução (autor)</option>'+
+          '<option>2. Feita a impugnação (executado)</option>'+
+          '<option>3. Feita a manifestação (autor)</option>'+
+          '<option>4. Sentença proferida</option>'+
+          '<option>5. Recurso apresentado</option>'+
+          '<option>6. Acórdão proferido</option>'+
+          '<option>7.1 Cálculo homologado, ainda sem petição</option>'+
+          '<option>7.2 Cálculo homologado, já com petição</option>'+
+          '<option>8. Feito o mandado de expedição de RPV / Alvará</option>'+
+          '<option>8.1 Apresentado ofício requisitório (demonstrativo RPV)</option>'+
+          '<option>9. RPV / Alvará expedido</option>'+
+        '</select>'+
+      '</div>'+
+    '</div>'+
+    '<div id="'+id+'-df-wrap" style="display:none" class="expand-info" >'+
+      '<div class="expand-info-title">Regra deságio flexível</div>'+
+      '<div class="row col2">'+
+        '<div class="field"><label>Prazo liquidação (meses)</label><input type="number" value="3" min="0"/></div>'+
+        '<div class="field"><label>Data limite da liquidação</label><input class="calc" type="text" placeholder="Calculada automaticamente"/></div>'+
+      '</div>'+
+      '<div class="row col4">'+
+        '<div class="field"><label>Deságio flexível (%)</label><input type="text" inputmode="decimal" id="'+id+'-df-pct" placeholder="0%" oninput="maskPct(this);rcCredit(\''+id+'\')" onblur="blurPct(this);rcCredit(\''+id+'\')"/></div>'+
+        '<div class="field"><label>Depósito final com deságio flexível</label><input class="calc" type="text" id="'+id+'-df-dep" placeholder="R$ 0,00"/></div>'+
+        '<div class="field"><label>Receita JusCash com deságio flexível</label><input class="calc" type="text" id="'+id+'-df-rec" placeholder="R$ 0,00"/></div>'+
+        '<div class="field"><label>Valor a devolver ao cliente</label><input class="calc hilite" type="text" id="'+id+'-df-dev" placeholder="R$ 0,00" readonly/></div>'+
+      '</div>'+
+      '<div class="row col2">'+
+        '<div class="field"><label>Status</label><select><option>Selecione</option><option>No prazo</option><option>Devolver</option><option>Devolvido</option><option>Vencido</option></select></div>'+
+        '<div></div>'+
+      '</div>'+
+    '</div>'+
     '<div class="row col4">'+
       '<div class="field"><label>Valor bruto (R$)</label><input type="text" inputmode="numeric" id="'+id+'-bruto" placeholder="R$ 0,00" oninput="maskMoney(this);rcCredit(\''+id+'\')" onblur="rcCredit(\''+id+'\')"/></div>'+
       '<div class="field"><label>Valor IR (R$)</label><input type="text" inputmode="numeric" id="'+id+'-ir" placeholder="R$ 0,00" oninput="maskMoney(this);rcCredit(\''+id+'\')" onblur="rcCredit(\''+id+'\')"/></div>'+
@@ -500,6 +535,72 @@ function addCredit(){
       '<div></div>'+
     '</div>';
   document.getElementById('credits-list').appendChild(d);
+}
+
+function toggleModeloCredit(id){
+  var chkDf=document.getElementById(id+'-chk-df');
+  var wrap=document.getElementById(id+'-df-wrap');
+  if(!chkDf||!wrap)return;
+  wrap.style.display=chkDf.checked?'block':'none';
+}
+
+function toggleModMs(creditId){
+  var dd=document.getElementById(creditId+'-mod-dd');
+  var trigger=document.getElementById(creditId+'-mod-trigger');
+  if(!dd||!trigger)return;
+  var isOpen=dd.classList.contains('open');
+  if(isOpen){
+    dd.classList.remove('open');
+    trigger.classList.remove('open');
+  } else {
+    dd.classList.add('open');
+    trigger.classList.add('open');
+  }
+}
+
+// seleções de modelo de transação por crédito
+var modSelections={};
+
+function toggleModOpt(creditId,val,optEl){
+  var key=creditId+'-mod';
+  if(!modSelections[key])modSelections[key]=new Set();
+  var sel=modSelections[key];
+  var chk=optEl.querySelector('input[type=checkbox]');
+  if(sel.has(val)){
+    sel.delete(val);
+    if(chk)chk.checked=false;
+    optEl.style.background='';
+  } else {
+    sel.add(val);
+    if(chk)chk.checked=true;
+    optEl.style.background='#EBF4FD';
+  }
+  // atualiza tags no trigger
+  var trigger=document.getElementById(creditId+'-mod-trigger');
+  var ph=document.getElementById(creditId+'-mod-ph');
+  if(!trigger)return;
+  trigger.querySelectorAll('.ms-tag').forEach(function(t){t.remove();});
+  var labels={
+    nao_aguarda:'Não aguarda homologação',
+    aguarda_homologacao:'Aguarda homologação',
+    aguarda_habilitacao:'Aguarda habilitação',
+    simples:'Simples',
+    modelo50:'Modelo 50%',
+    desagio_flex:'Deságio flexível'
+  };
+  if(sel.size===0){
+    if(ph){ph.style.display='';ph.textContent='Selecione';}
+  } else {
+    if(ph)ph.style.display='none';
+    sel.forEach(function(v){
+      var tag=document.createElement('span');
+      tag.className='ms-tag';
+      tag.textContent=labels[v]||v;
+      trigger.insertBefore(tag,ph);
+    });
+  }
+  // toggle deságio flexível
+  toggleModeloCredit(creditId);
 }
 
 function rmCredit(id){
@@ -524,7 +625,6 @@ function rmCredit(id){
 function rcCredit(id){
   var bruto=num(document.getElementById(id+'-bruto').value);
   var ir=num(document.getElementById(id+'-ir').value);
-  // deságio: lê o campo de texto puro (sem máscara de moeda)
   var desRaw=document.getElementById(id+'-des').value;
   var des=parseFloat(desRaw.replace(',','.'))||0;
   var abat=num(document.getElementById(id+'-abat').value);
@@ -534,6 +634,17 @@ function rcCredit(id){
   setI(id+'-ded', ded>=0?brl(ded):'');
   setI(id+'-dep', dep>=0?brl(dep):'');
   setI(id+'-total', tot>=0?brl(tot):'');
+  // deságio flexível por crédito
+  var chkDf=document.getElementById(id+'-chk-df');
+  if(chkDf&&chkDf.checked){
+    var dfPctRaw=document.getElementById(id+'-df-pct');
+    var dfPct=dfPctRaw?parseFloat(dfPctRaw.value.replace(',','.'))||0:0;
+    var dfDep=tot*(1-dfPct/100);
+    var dfRec=tot-dfDep;
+    setI(id+'-df-dep',brl(dfDep));
+    setI(id+'-df-rec',brl(dfRec));
+    setI(id+'-df-dev',brl(dfRec));
+  }
   credits[id]={bruto:bruto,ir:ir,desagio:des,abatimento:abat,deduzido:ded,deposito:dep,depTotal:tot};
   recalcAll();
 }

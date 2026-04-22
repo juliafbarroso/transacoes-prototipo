@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SIJ — Editar transação</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:#1a1a1a;background:#f0f0ed;min-height:100vh;display:flex;flex-direction:column;overflow:auto}
+
+/* topbar global */
+.topbar{background:#0D2D42;height:48px;display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-icon{width:28px;height:28px;background:rgba(255,255,255,0.15);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:16px;height:16px;fill:#fff}
+.logo-name{font-size:14px;font-weight:600;color:#fff}
+.logo-badge{font-size:10px;background:#1e5f8a;color:#a8d4f0;padding:2px 7px;border-radius:4px;font-weight:600;letter-spacing:0.04em}
+.topbar-nav{display:flex;gap:2px;margin-left:8px}
+.tnav{padding:6px 12px;font-size:12px;color:rgba(255,255,255,0.6);cursor:pointer;border-radius:5px;display:flex;align-items:center;gap:7px}
+.tnav:hover{background:rgba(255,255,255,0.08);color:#fff}
+.tnav-icon{width:14px;height:14px;opacity:0.7}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.notif{width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.6);cursor:pointer}
+.user-chip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border-radius:6px;padding:4px 8px;cursor:pointer}
+.user-chip span{font-size:12px;font-weight:600;color:#fff}
+
+/* page shell */
+.shell{display:flex;flex-direction:column;flex:1}
+
+/* page header area */
+.page-top{background:#fff;border-bottom:1px solid #e8e8e3;flex-shrink:0}
+.page-hd{display:flex;align-items:center;justify-content:space-between;padding:10px 24px}
+.breadcrumb{font-size:12px;color:#888;display:flex;align-items:center;gap:5px}
+.breadcrumb .sep{color:#ccc}
+.breadcrumb strong{color:#1a1a1a;font-weight:500}
+.hd-right{display:flex;align-items:center;gap:8px}
+.btn{height:32px;padding:0 16px;border-radius:6px;font-size:13px;cursor:pointer;border:1px solid #d5d5d0;background:#fff;color:#333;font-weight:500}
+.btn:hover{background:#f5f5f3}
+.btn-primary{background:#1558A0;color:#fff;border-color:#1558A0}
+.btn-primary:hover{background:#1048890}
+
+/* abas */
+.tabs-bar{display:flex;padding:0 24px;border-bottom:1px solid #e8e8e3;background:#fff}
+.tab{padding:12px 20px;font-size:13px;color:#888;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tab:hover{color:#333}
+.tab.active{color:#1558A0;border-bottom-color:#1558A0;font-weight:500}
+
+/* main scroll */
+.main{flex:1;padding:20px 24px}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* card/section */
+.card{background:#fff;border:1px solid #e8e8e3;border-radius:10px;margin-bottom:12px;overflow:hidden}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;cursor:pointer;user-select:none}
+.card-hd:hover{background:#fafaf8}
+.card-title{font-size:14px;font-weight:500;color:#1a1a1a}
+.chev{color:#aaa;transition:transform 0.18s;display:flex}
+.card.collapsed .chev{transform:rotate(-90deg)}
+.card-body{padding:20px;border-top:1px solid #f0f0ed}
+.card.collapsed .card-body{display:none}
+
+/* form */
+.row{display:grid;gap:12px;margin-bottom:12px}
+.row:last-child{margin-bottom:0}
+.col2{grid-template-columns:1fr 1fr}
+.col3{grid-template-columns:1fr 1fr 1fr}
+.col4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.col5{grid-template-columns:repeat(5,minmax(0,1fr))}
+
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12px;color:#555;font-weight:500}
+.field input,.field select{
+  height:36px;border:1px solid #d5d5d0;border-radius:6px;
+  padding:0 12px;font-size:13px;background:#fff;color:#1a1a1a;width:100%;
+  transition:border-color 0.15s
+}
+.field input.calc{background:#f7f7f5;color:#666;cursor:default;border-color:#e8e8e3}
+.field input.hilite{background:#EBF4FD;border-color:#85B7EB;color:#0C447C;font-weight:600}
+.field input:focus,.field select:focus{outline:none;border-color:#1558A0;box-shadow:0 0 0 3px rgba(21,88,160,0.08)}
+
+/* credit rows */
+.credit-item{border:1px solid #eaeae5;border-radius:8px;padding:14px;margin-bottom:8px;background:#fafaf8}
+.credit-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.credit-lbl{font-size:12px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:0.05em}
+.rm-btn{font-size:12px;color:#b03535;background:none;border:none;cursor:pointer;padding:3px 8px;border-radius:5px}
+.rm-btn:hover{background:#fdf0f0}
+.add-btn{width:100%;height:36px;display:flex;align-items:center;justify-content:center;gap:7px;
+  border:1px dashed #c8c8c3;border-radius:6px;background:none;font-size:13px;color:#666;cursor:pointer;margin-top:10px}
+.add-btn:hover{border-color:#1558A0;color:#1558A0;background:#EBF4FD}
+
+/* calc final */
+.calc-final{background:#f5f5f3;border-radius:8px;padding:14px 16px;margin-top:14px;border:1px solid #e8e8e3}
+.calc-final-title{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.ci label{font-size:11px;color:#999;display:block;margin-bottom:3px}
+.ci span{font-size:14px;font-weight:600;color:#1a1a1a}
+.ci span.muted{color:#bbb;font-weight:400;font-style:italic;font-size:12px}
+.calc-divider{grid-column:1/-1;height:1px;background:#e8e8e3;margin:2px 0}
+
+/* exceções */
+.exc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.chk-row{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:13px;cursor:pointer;color:#333;border-bottom:1px solid #f5f5f3}
+.chk-row:last-child,.chk-row:nth-last-child(2){border-bottom:none}
+.chk-row input[type=checkbox]{width:14px;height:14px;accent-color:#1558A0;cursor:pointer;flex-shrink:0}
+
+/* expand blocks */
+.expand-info{border:1px solid #B5D4F4;background:#EBF4FD;border-radius:8px;padding:14px;margin-top:12px}
+.expand-info-title{font-size:11px;font-weight:600;color:#0C447C;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px}
+.expand-warn{border:1px solid #FAC775;background:#FAEEDA;border-radius:8px;padding:14px;margin-top:12px}
+.expand-warn-title{font-size:11px;font-weight:600;color:#633806;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px}
+
+/* movimentações */
+.mov-item{border:1px solid #eaeae5;border-radius:8px;padding:14px;margin-bottom:8px}
+.mov-hd{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.tipo-sel{height:32px;border:1px solid #d5d5d0;border-radius:6px;padding:0 10px;font-size:12px;background:#fff;color:#1a1a1a}
+.badge-dep{display:inline-flex;align-items:center;height:22px;padding:0 10px;border-radius:11px;font-size:11px;font-weight:600;background:#EAF3DE;color:#27500A}
+.badge-rec{display:inline-flex;align-items:center;height:22px;padding:0 10px;border-radius:11px;font-size:11px;font-weight:600;background:#E6F1FB;color:#0C447C}
+
+/* toggle */
+.toggle-row{display:flex;align-items:center;gap:9px;font-size:13px;color:#555;padding:8px 0}
+.toggle{position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.tslider{position:absolute;inset:0;background:#ccc;border-radius:10px;cursor:pointer;transition:.15s}
+.tslider:before{content:"";position:absolute;width:16px;height:16px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.15s;box-shadow:0 1px 3px rgba(0,0,0,0.25)}
+input:checked+.tslider{background:#1558A0}
+input:checked+.tslider:before{transform:translateX(16px)}
+
+/* IR block */
+.ir-block{border-top:1px solid #eaeae5;margin-top:12px;padding-top:12px}
+.ir-block-title{font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px}
+
+/* sum bar */
+.sum-bar{display:flex;gap:24px;background:#f5f5f3;border-radius:8px;padding:12px 16px;margin-top:12px;flex-wrap:wrap;border:1px solid #e8e8e3}
+.sum-it label{font-size:11px;color:#999;display:block;margin-bottom:2px}
+.sum-it span{font-size:13px;font-weight:600;color:#1a1a1a}
+
+/* section divider label */
+.section-sub{font-size:12px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #f0f0ed}
+
+/* multiselect de créditos */
+.ms-wrap{position:relative}
+.ms-trigger{min-height:36px;border:1px solid #d5d5d0;border-radius:6px;padding:4px 32px 4px 10px;font-size:13px;background:#fff;color:#1a1a1a;width:100%;cursor:pointer;display:flex;flex-wrap:wrap;gap:4px;align-items:center;transition:border-color 0.15s;user-select:none}
+.ms-trigger:hover{border-color:#aaa}
+.ms-trigger.open{border-color:#1558A0;box-shadow:0 0 0 3px rgba(21,88,160,0.08)}
+.ms-trigger .placeholder{color:#aaa;font-size:13px}
+.ms-arrow{position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:#888;transition:transform 0.15s}
+.ms-trigger.open+.ms-arrow{transform:translateY(-50%) rotate(180deg)}
+.ms-tag{display:inline-flex;align-items:center;gap:5px;background:#E6F1FB;color:#0C447C;border-radius:4px;padding:2px 7px;font-size:12px;font-weight:500;white-space:nowrap}
+.ms-tag button{background:none;border:none;color:#0C447C;cursor:pointer;font-size:13px;padding:0;line-height:1;opacity:0.7}
+.ms-tag button:hover{opacity:1}
+.ms-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid #d5d5d0;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.10);z-index:100;overflow:hidden;display:none}
+.ms-dropdown.open{display:block}
+.ms-opt{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;font-size:13px;color:#333;transition:background 0.1s}
+.ms-opt:hover{background:#f5f5f3}
+.ms-opt input[type=checkbox]{width:14px;height:14px;accent-color:#1558A0;flex-shrink:0;cursor:pointer}
+.ms-opt-meta{font-size:11px;color:#999;margin-left:auto}
+.ms-none{padding:10px 12px;font-size:12px;color:#aaa;font-style:italic}
+.ms-ir-note{background:#f5f5f3;border-radius:6px;padding:8px 10px;font-size:12px;color:#666;margin-top:8px;display:flex;align-items:center;gap:6px}
+.ms-ir-note svg{flex-shrink:0;color:#999}
+.modelo-wrap{border:1px solid #d5d5d0;border-radius:6px;padding:8px 12px;background:#fff;display:flex;flex-direction:column;gap:6px}
+.modelo-chk{display:flex;align-items:center;gap:8px;font-size:13px;color:#333;cursor:pointer;user-select:none}
+.modelo-chk input[type=checkbox]{width:14px;height:14px;accent-color:#1558A0;cursor:pointer;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- global topbar -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon"><svg viewBox="0 0 16 16"><path d="M3 3h10v10H3z" fill-opacity="0.3"/><path d="M5 5h6v6H5z"/></svg></div>
+    <span class="logo-name">JusCash</span>
+    <span class="logo-badge">SIJ</span>
+  </div>
+  <div class="topbar-nav">
+    <div class="tnav">
+      <svg class="tnav-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="5" height="5" rx="1"/><rect x="8" y="1" width="5" height="5" rx="1"/><rect x="1" y="8" width="5" height="5" rx="1"/><rect x="8" y="8" width="5" height="5" rx="1"/></svg>
+      JusDash
+    </div>
+    <div class="tnav" style="color:#fff;background:rgba(255,255,255,0.12)">
+      <svg class="tnav-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2h10v10H2z"/><path d="M2 5h10M5 5v7"/></svg>
+      Comercial
+    </div>
+    <div class="tnav">
+      <svg class="tnav-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M7 4v3l2 2"/></svg>
+      Jurídico
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="notif">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 2a5 5 0 015 5v3l1.5 2.5H2.5L4 10V7a5 5 0 015-5z"/><path d="M7 14.5a2 2 0 004 0"/></svg>
+    </div>
+    <div class="user-chip"><span>CN</span><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></div>
+  </div>
+</div>
+
+<div class="shell">
+  <div class="page-top">
+    <div class="page-hd">
+      <div class="breadcrumb">
+        <span>Transações</span><span class="sep">›</span>
+        <span>Transação</span><span class="sep">›</span>
+        <strong>Editar transação</strong>
+      </div>
+      <div class="hd-right">
+        <button class="btn">Cancelar e voltar</button>
+        <button class="btn btn-primary">Salvar</button>
+      </div>
+    </div>
+    <div class="tabs-bar">
+      <div class="tab" id="tab-btn-processo" onclick="goTab('processo')">Informações do processo</div>
+      <div class="tab active" id="tab-btn-comercial" onclick="goTab('comercial')">Comercial</div>
+      <div class="tab" id="tab-btn-financeiro" onclick="goTab('financeiro')">Financeiro</div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- ══════════════ PROCESSO ══════════════ -->
+    <div id="tab-processo" class="tab-panel">
+      <div class="card">
+        <div class="card-hd" onclick="togCard(this.parentElement)">
+          <span class="card-title">Informações do processo</span>
+          <span class="chev"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l5 5 5-5"/></svg></span>
+        </div>
+        <div class="card-body">
+          <div class="row col2">
+            <div class="field"><label>Número do processo</label><input type="text" value="0600363-91.2024.8.04.5600"/></div>
+            <div class="field"><label>Número do cumprimento de sentença</label><input type="text" placeholder=""/></div>
+          </div>
+          <div class="row col3">
+            <div class="field"><label>Número do RPV</label><input type="text"/></div>
+            <div class="field"><label>Esfera</label><select><option>Selecione</option><option>Cível</option><option>Federal</option><option>Trabalhista</option></select></div>
+            <div class="field"><label>Grau de jurisdição</label><select><option>Selecione</option><option>1ª instância</option><option>2ª instância</option></select></div>
+          </div>
+          <div class="row col2">
+            <div class="field"><label>Tribunal de tramitação</label><input type="text" value="TJAM"/></div>
+            <div class="field"><label>Unidade judiciária</label><input type="text" value="3ª Unidade — Previdenciário"/></div>
+          </div>
+          <div class="row col2">
+            <div class="field"><label>Rito</label><select><option>Selecione</option><option>Comum</option><option>Sumaríssimo</option></select></div>
+            <div class="field"><label>Tipo do réu</label>
+              <select id="tipo-reu" onchange="updateFaseProcessual()">
+                <option value="">Selecione</option>
+                <option value="publico">Público</option>
+                <option value="privado_concordancia">Privado — Concordância</option>
+                <option value="privado_discordancia">Privado — Discordância</option>
+                <option value="pericial_concordancia">Privado — Concordância (periciais)</option>
+                <option value="pericial_discordancia">Privado — Discordância (periciais)</option>
+              </select>
+            </div>
+          </div>
+          <div class="row col3">
+            <div class="field"><label>UF</label><select><option>AM</option><option>SP</option><option>RJ</option><option>MG</option></select></div>
+            <div class="field"><label>ID iiLex</label><input type="text" placeholder="Cadastrar no iiLex"/></div>
+            <div></div>
+          </div>
+          <div class="row col2" style="margin-top:4px">
+            <div class="field">
+              <label>Fase processual</label>
+              <select id="fase-processual">
+                <option value="">Selecione o tipo do réu primeiro</option>
+              </select>
+            </div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ COMERCIAL ══════════════ -->
+    <div id="tab-comercial" class="tab-panel active">
+
+      <div class="card">
+        <div class="card-hd" onclick="togCard(this.parentElement)">
+          <span class="card-title">Condições comerciais</span>
+          <span class="chev"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l5 5 5-5"/></svg></span>
+        </div>
+        <div class="card-body">
+          <div class="row col2">
+            <div class="field"><label>Índice de correção</label><select><option>Selecione</option><option selected>IPCA</option><option>IGPM</option><option>SELIC</option></select></div>
+            <div class="field"><label>Correção a partir de</label><select><option>Selecione</option><option selected>Citação</option><option>Sentença</option></select></div>
+          </div>
+          <div class="row col3">
+            <div class="field"><label>Prazo liquidação (meses)</label><input type="number" value="5" min="0"/></div>
+            <div class="field"><label>Data estimada da liquidação</label><input class="calc" type="text" value="24/09/2026"/></div>
+            <div class="field"><label>Juros moratório</label><select><option>Selecione</option><option selected>2%</option></select></div>
+          </div>
+          <div class="row col2">
+            <div class="field"><label>Empresa</label><select><option>Selecione</option><option selected>JusCash</option></select></div>
+            <div class="field"><label>Data de arbitramento de honorários</label><input type="date" value="2026-09-24"/></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd" onclick="togCard(this.parentElement)">
+          <span class="card-title">Créditos e valores</span>
+          <span class="chev"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l5 5 5-5"/></svg></span>
+        </div>
+        <div class="card-body">
+          <div class="row col3" style="margin-bottom:16px">
+            <div class="field"><label>Deságio alvo (%)</label><input type="text" inputmode="decimal" id="g-desagio" value="20" placeholder="0%" oninput="maskPct(this);recalcAll()" onblur="blurPct(this);recalcAll()"/></div>
+            <div class="field"><label>Incremento registro (%)</label><input type="text" inputmode="decimal" id="g-inc-reg" value="2" placeholder="0%" oninput="maskPct(this);recalcAll()" onblur="blurPct(this);recalcAll()"/></div>
+            <div class="field"><label>Incremento risco (%)</label><input type="text" inputmode="decimal" id="g-inc-risk" value="2" placeholder="0%" oninput="maskPct(this);recalcAll()" onblur="blurPct(this);recalcAll()"/></div>
+          </div>
+          <div id="credits-list"></div>
+          <button class="add-btn" onclick="addCredit()">+ Adicionar crédito</button>
+          <div class="calc-final">
+            <div class="calc-final-title">Cálculo final consolidado</div>
+            <div class="calc-grid">
+              <div class="ci"><label>Valor do contrato</label><span id="cf-contrato">R$ 0,00</span></div>
+              <div class="ci"><label>Deságio médio</label><span id="cf-desagio">0,00%</span></div>
+              <div class="ci"><label>Desconto total de IR</label><span id="cf-ir">R$ 0,00</span></div>
+              <div class="ci"><label>Valor do depósito</label><span id="cf-deposito">R$ 0,00</span></div>
+              <div class="calc-divider"></div>
+              <div class="ci"><label>Abatimento total</label><span id="cf-abatimento">R$ 0,00</span></div>
+              <div class="ci"><label>Valor depósito final</label><span id="cf-depfinal">R$ 0,00</span></div>
+              <div class="ci"><label>Eficiência média</label><span id="cf-eficiencia">—</span></div>
+              <div class="ci"><label>Receita JusCash</label><span id="cf-receita">R$ 0,00</span></div>
+              <div class="calc-divider"></div>
+              <div class="ci"><label>Receita registro</label><span id="cf-reg" class="muted">Pendente definição</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd" onclick="togCard(this.parentElement)">
+          <span class="card-title">Exceções</span>
+          <span class="chev"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l5 5 5-5"/></svg></span>
+        </div>
+        <div class="card-body">
+          <div class="exc-grid">
+            <label class="chk-row"><input type="checkbox" id="chkParc" onchange="toggleParc()"/> Parceria</label>
+            <div></div>
+          </div>
+          </div>
+
+          <div id="parc-block" style="display:none" class="expand-warn">
+            <div class="expand-warn-title">Regra de parceria</div>
+            <div class="row col3">
+              <div class="field"><label>Tipo de parceria</label><select><option>Selecione</option><option>Indicação</option><option>Condenação</option><option>Influenciador</option></select></div>
+              <div class="field"><label>Cliente parceiro</label><input type="text" placeholder="Selecione ou digite"/></div>
+              <div class="field"><label>Comissão (%)</label><input type="text" inputmode="decimal" id="parc-pct" value="2" placeholder="0%" oninput="maskPct(this);recalcParc()" onblur="blurPct(this);recalcParc()"/></div>
+            </div>
+            <div class="field" style="margin-bottom:12px">
+              <label>Créditos vinculados <span style="font-weight:400;color:#aaa">(a comissão incide sobre o depósito final dos créditos selecionados)</span></label>
+              <div class="ms-wrap" id="parc-ms-wrap">
+                <div class="ms-trigger" id="parc-ms-trigger" onclick="toggleParcMs()">
+                  <span class="placeholder" id="parc-ms-ph">Todos os créditos</span>
+                </div>
+                <svg class="ms-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l4 4 4-4"/></svg>
+                <div class="ms-dropdown" id="parc-ms-dd"></div>
+              </div>
+            </div>
+            <div class="row col3">
+              <div class="field"><label>Valor da comissão</label><input class="calc" type="text" id="parc-valor" placeholder="R$ 0,00"/></div>
+              <div class="field"><label>Status</label><select><option>Pendente</option><option>Pago</option></select></div>
+              <div class="field"><label>Data do pagamento</label><input type="date"/></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══════════════ FINANCEIRO ══════════════ -->
+    <div id="tab-financeiro" class="tab-panel">
+
+      <div class="card">
+        <div class="card-hd" onclick="togCard(this.parentElement)">
+          <span class="card-title">Depósito e recebimento</span>
+          <span class="chev"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l5 5 5-5"/></svg></span>
+        </div>
+        <div class="card-body">
+          <div id="mov-list"></div>
+          <button class="add-btn" onclick="addMov()">+ Adicionar movimentação</button>
+          <div class="sum-bar">
+            <div class="sum-it"><label>Valor deduzido IR (referência)</label><span id="sv-ref">R$ 0,00</span></div>
+            <div class="sum-it"><label>Valor depósito total</label><span id="sv-deptotal">R$ 0,00</span></div>
+            <div class="sum-it"><label>Total depositado ao cliente</label><span id="sv-dep">R$ 0,00</span></div>
+            <div class="sum-it"><label>Total recebido da liquidação</label><span id="sv-rec">R$ 0,00</span></div>
+            <div class="sum-it"><label>Saldo a receber</label><span id="sv-saldo">R$ 0,00</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+// ── utils ──────────────────────────────────────────────────────
+// Lê valor real de um campo com máscara (ex: "R$ 1.200,50" → 1200.50)
+function num(v){
+  if(v==null)return 0;
+  var s=String(v).replace(/R\$\s*/g,'').replace(/\./g,'').replace(',','.');
+  return parseFloat(s.replace(/[^0-9.\-]/g,''))||0;
+}
+function brl(v){
+  var n=Number(v);
+  var abs=Math.abs(n);
+  var formatted='R$ '+abs.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return n<0?'− '+formatted:formatted;
+}
+function pf(v){
+  return Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';
+}
+function setT(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+function setI(id,v){var e=document.getElementById(id);if(e)e.value=v;}
+
+// Máscara monetária: aplica no oninput de campos de valor
+// Mantém apenas dígitos, divide por 100, formata como BRL
+function maskMoney(el){
+  var raw=el.value.replace(/\D/g,'');
+  if(raw===''){el.value='';return;}
+  var n=parseInt(raw,10)/100;
+  el.value=brl(n);
+}
+// Máscara percentual: apenas números e até 2 decimais
+function maskPct(el){
+  var raw=el.value.replace(/[^0-9,\.]/g,'').replace(',','.');
+  // permite digitar livremente, formata ao sair
+  el.value=raw;
+}
+function blurPct(el){
+  var v=parseFloat(el.value.replace(',','.'))||0;
+  el.value=v%1===0?v.toFixed(0):v.toFixed(2);
+}
+
+// ── navegação ──────────────────────────────────────────────────
+function goTab(name){
+  ['processo','comercial','financeiro'].forEach(function(t){
+    document.getElementById('tab-'+t).classList.remove('active');
+    document.getElementById('tab-btn-'+t).classList.remove('active');
+  });
+  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('tab-btn-'+name).classList.add('active');
+}
+function togCard(el){el.classList.toggle('collapsed');}
+function toggleParc(){document.getElementById('parc-block').style.display=document.getElementById('chkParc').checked?'block':'none';recalcParc();}
+
+// lista completa de tipos de crédito (sistema legado + novos, sem duplicatas)
+var TIPOS_CREDITO=[
+  'Honorários',
+  'Honorários + Condenação',
+  'Honorários Periciais',
+  'Condenação',
+  'Contratuais com destaque',
+  'Contratuais com destaque + Condenação',
+  'Contratuais com destaque + Sucumbenciais',
+  'Contratuais sem destaque',
+  'Contratuais sem destaque + Condenação',
+  'Contratuais sem destaque + Sucumbenciais',
+  'Dativos',
+  'Dativos + Sucumbenciais',
+  'Sucumbenciais',
+  'Sucumbenciais + Condenação',
+  'Totalidade de Créditos',
+  'Totalidade de Créditos - sem destaque'
+];
+
+function tipoOpts(){
+  return '<option value="">Selecione</option>'+TIPOS_CREDITO.map(function(t){return'<option>'+t+'</option>';}).join('');
+}
+
+// retorna array de ids de movimentações que vinculam este crédito
+function movimentacoesVinculadas(creditId){
+  return Object.keys(movSelections).filter(function(movId){
+    return movSelections[movId]&&movSelections[movId].has(creditId);
+  });
+}
+
+var cCount=0, credits={};
+
+function addCredit(){
+  cCount++;
+  var n=cCount, id='cr'+n;
+  credits[id]={bruto:0,ir:0,desagio:0,abatimento:0,deduzido:0,deposito:0,depTotal:0};
+  var d=document.createElement('div');
+  d.className='credit-item';d.id=id;
+  d.innerHTML=
+    '<div class="credit-hd">'+
+      '<span class="credit-lbl">Crédito '+n+'</span>'+
+      '<button class="rm-btn" onclick="rmCredit(\''+id+'\')">Remover</button>'+
+    '</div>'+
+    '<div id="'+id+'-error" style="display:none;background:#FFF0F0;border:1px solid #F09595;border-radius:6px;padding:8px 12px;font-size:12px;color:#A32D2D;margin-bottom:10px"></div>'+
+    '<div class="row col2">'+
+      '<div class="field"><label>Cedente</label><select><option value="">Selecione</option><option>Amélia Mascarenhas</option><option>João Silva</option><option>Maria Oliveira</option></select></div>'+
+      '<div class="field"><label>Tipo de crédito</label><select onchange="updateFaseProcessual()">'+tipoOpts()+'</select></div>'+
+    '</div>'+
+    '<div class="row col2">'+
+      '<div class="field">'+
+        '<label>Modelo de transação</label>'+
+        '<div class="ms-wrap" id="'+id+'-mod-wrap">'+
+          '<div class="ms-trigger" id="'+id+'-mod-trigger" onclick="toggleModMs(\''+id+'\')">'+
+            '<span class="placeholder" id="'+id+'-mod-ph">Selecione</span>'+
+          '</div>'+
+          '<svg class="ms-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l4 4 4-4"/></svg>'+
+          '<div class="ms-dropdown" id="'+id+'-mod-dd">'+
+            '<div class="ms-opt" onclick="toggleModOpt(\''+id+'\',\'nao_aguarda\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Não aguarda homologação</span></div>'+
+            '<div class="ms-opt" onclick="toggleModOpt(\''+id+'\',\'aguarda_homologacao\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Aguarda homologação</span></div>'+
+            '<div class="ms-opt" onclick="toggleModOpt(\''+id+'\',\'aguarda_habilitacao\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Aguarda habilitação</span></div>'+
+            '<div class="ms-opt" onclick="toggleModOpt(\''+id+'\',\'simples\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Simples (normal total)</span></div>'+
+            '<div class="ms-opt" onclick="toggleModOpt(\''+id+'\',\'modelo50\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Modelo 50%</span></div>'+
+            '<div class="ms-opt" id="'+id+'-mod-opt-df" onclick="toggleModOpt(\''+id+'\',\'desagio_flex\',this)"><input type="checkbox" id="'+id+'-chk-df" onclick="event.stopPropagation()"/> <span>Deságio flexível</span></div>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div id="'+id+'-df-wrap" style="display:none" class="expand-info" >'+
+      '<div class="expand-info-title">Regra deságio flexível</div>'+
+      '<div class="row col2">'+
+        '<div class="field"><label>Prazo liquidação (meses)</label><input type="number" value="3" min="0"/></div>'+
+        '<div class="field"><label>Data limite da liquidação</label><input class="calc" type="text" placeholder="Calculada automaticamente"/></div>'+
+      '</div>'+
+      '<div class="row col4">'+
+        '<div class="field"><label>Deságio flexível (%)</label><input type="text" inputmode="decimal" id="'+id+'-df-pct" placeholder="0%" oninput="maskPct(this);rcCredit(\''+id+'\')" onblur="blurPct(this);rcCredit(\''+id+'\')"/></div>'+
+        '<div class="field"><label>Depósito final com deságio flexível</label><input class="calc" type="text" id="'+id+'-df-dep" placeholder="R$ 0,00"/></div>'+
+        '<div class="field"><label>Receita JusCash com deságio flexível</label><input class="calc" type="text" id="'+id+'-df-rec" placeholder="R$ 0,00"/></div>'+
+        '<div class="field"><label>Valor a devolver ao cliente</label><input class="calc hilite" type="text" id="'+id+'-df-dev" placeholder="R$ 0,00" readonly/></div>'+
+      '</div>'+
+      '<div class="row col2">'+
+        '<div class="field"><label>Status</label><select><option>Selecione</option><option>No prazo</option><option>Devolver</option><option>Devolvido</option><option>Vencido</option></select></div>'+
+        '<div></div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="row col4">'+
+      '<div class="field"><label>Valor bruto (R$)</label><input type="text" inputmode="numeric" id="'+id+'-bruto" placeholder="R$ 0,00" oninput="maskMoney(this);rcCredit(\''+id+'\')" onblur="rcCredit(\''+id+'\')"/></div>'+
+      '<div class="field"><label>Valor IR (R$)</label><input type="text" inputmode="numeric" id="'+id+'-ir" placeholder="R$ 0,00" oninput="maskMoney(this);rcCredit(\''+id+'\')" onblur="rcCredit(\''+id+'\')"/></div>'+
+      '<div class="field"><label>Valor deduzido IR (R$)</label><input class="calc" type="text" id="'+id+'-ded" readonly placeholder="R$ 0,00"/></div>'+
+      '<div class="field"><label>Deságio (%)</label><input type="text" inputmode="decimal" id="'+id+'-des" placeholder="0%" oninput="maskPct(this);rcCredit(\''+id+'\')" onblur="blurPct(this);rcCredit(\''+id+'\')"/></div>'+
+    '</div>'+
+    '<div class="row col4">'+
+      '<div class="field"><label>Valor depósito (R$)</label><input class="calc" type="text" id="'+id+'-dep" readonly placeholder="R$ 0,00"/></div>'+
+      '<div class="field"><label>Abatimento (R$)</label><input type="text" inputmode="numeric" id="'+id+'-abat" placeholder="R$ 0,00" oninput="maskMoney(this);rcCredit(\''+id+'\')" onblur="rcCredit(\''+id+'\')"/></div>'+
+      '<div class="field"><label>Valor depósito total (R$)</label><input class="calc hilite" type="text" id="'+id+'-total" readonly placeholder="R$ 0,00"/></div>'+
+      '<div></div>'+
+    '</div>'+
+    '<div class="section-sub" style="margin-top:14px;margin-bottom:10px">Informações do crédito</div>'+
+    '<div class="row col3">'+
+      '<div class="field"><label>Data base da venda</label><input type="date"/></div>'+
+      '<div class="field"><label>Status</label>'+
+        '<select>'+
+          '<option value="">Selecione</option>'+
+          '<option>Em aberto</option>'+
+          '<option>Aguarda pagamento</option>'+
+          '<option>Aguarda recebimento</option>'+
+          '<option>Concluído</option>'+
+          '<option>Perdido</option>'+
+          '<option>Cancelado</option>'+
+        '</select>'+
+      '</div>'+
+      '<div class="field"><label>Tipo de ativo</label>'+
+        '<select>'+
+          '<option value="">Selecione</option>'+
+          '<option>RPV</option>'+
+          '<option>Precatório</option>'+
+        '</select>'+
+      '</div>'+
+    '</div>'+
+    '<div class="row col2">'+
+      '<div class="field">'+
+        '<label>Exceções</label>'+
+        '<div class="ms-wrap" id="'+id+'-exc-wrap">'+
+          '<div class="ms-trigger" id="'+id+'-exc-trigger" onclick="toggleExcMs(\''+id+'\')">'+
+            '<span class="placeholder" id="'+id+'-exc-ph">Nenhuma exceção</span>'+
+          '</div>'+
+          '<svg class="ms-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l4 4 4-4"/></svg>'+
+          '<div class="ms-dropdown" id="'+id+'-exc-dd">'+
+            '<div class="ms-opt" onclick="toggleExcOpt(\''+id+'\',\'contra30\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Contratuais acima de 30%</span></div>'+
+            '<div class="ms-opt" onclick="toggleExcOpt(\''+id+'\',\'sem_destaque\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Contratuais sem destaque</span></div>'+
+            '<div class="ms-opt" onclick="toggleExcOpt(\''+id+'\',\'dev_solidario\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Devedor solidário</span></div>'+
+            '<div class="ms-opt" onclick="toggleExcOpt(\''+id+'\',\'fase_avancada\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Fase avançada sem incremento</span></div>'+
+            '<div class="ms-opt" onclick="toggleExcOpt(\''+id+'\',\'fora_politica\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Réu fora da política padrão</span></div>'+
+            '<div class="ms-opt" onclick="toggleExcOpt(\''+id+'\',\'reu_revel\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Réu revel</span></div>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+      '<div></div>'+
+    '</div>';
+  document.getElementById('credits-list').appendChild(d);
+}
+
+function toggleModeloCredit(id){
+  var chkDf=document.getElementById(id+'-chk-df');
+  var wrap=document.getElementById(id+'-df-wrap');
+  if(!chkDf||!wrap)return;
+  wrap.style.display=chkDf.checked?'block':'none';
+}
+
+function toggleExcMs(creditId){
+  var dd=document.getElementById(creditId+'-exc-dd');
+  var trigger=document.getElementById(creditId+'-exc-trigger');
+  if(!dd||!trigger)return;
+  var isOpen=dd.classList.contains('open');
+  if(isOpen){dd.classList.remove('open');trigger.classList.remove('open');}
+  else{dd.classList.add('open');trigger.classList.add('open');}
+}
+
+var excSelections={};
+function toggleExcOpt(creditId,val,optEl){
+  var key=creditId+'-exc';
+  if(!excSelections[key])excSelections[key]=new Set();
+  var sel=excSelections[key];
+  var chk=optEl.querySelector('input[type=checkbox]');
+  var labels={contra30:'Contratuais acima de 30%',sem_destaque:'Contratuais sem destaque',dev_solidario:'Devedor solidário',fase_avancada:'Fase avançada sem incremento',fora_politica:'Réu fora da política padrão',reu_revel:'Réu revel'};
+  if(sel.has(val)){sel.delete(val);if(chk)chk.checked=false;optEl.style.background='';}
+  else{sel.add(val);if(chk)chk.checked=true;optEl.style.background='#EBF4FD';}
+  var trigger=document.getElementById(creditId+'-exc-trigger');
+  var ph=document.getElementById(creditId+'-exc-ph');
+  if(!trigger)return;
+  trigger.querySelectorAll('.ms-tag').forEach(function(t){t.remove();});
+  if(sel.size===0){if(ph){ph.style.display='';ph.textContent='Nenhuma exceção';}}
+  else{
+    if(ph)ph.style.display='none';
+    sel.forEach(function(v){
+      var tag=document.createElement('span');
+      tag.className='ms-tag';tag.textContent=labels[v]||v;
+      trigger.insertBefore(tag,ph);
+    });
+  }
+}
+
+function toggleModMs(creditId){
+  var dd=document.getElementById(creditId+'-mod-dd');
+  var trigger=document.getElementById(creditId+'-mod-trigger');
+  if(!dd||!trigger)return;
+  var isOpen=dd.classList.contains('open');
+  if(isOpen){
+    dd.classList.remove('open');
+    trigger.classList.remove('open');
+  } else {
+    dd.classList.add('open');
+    trigger.classList.add('open');
+  }
+}
+
+// seleções de modelo de transação por crédito
+var modSelections={};
+
+function toggleModOpt(creditId,val,optEl){
+  var key=creditId+'-mod';
+  if(!modSelections[key])modSelections[key]=new Set();
+  var sel=modSelections[key];
+  var chk=optEl.querySelector('input[type=checkbox]');
+  if(sel.has(val)){
+    sel.delete(val);
+    if(chk)chk.checked=false;
+    optEl.style.background='';
+  } else {
+    sel.add(val);
+    if(chk)chk.checked=true;
+    optEl.style.background='#EBF4FD';
+  }
+  // atualiza tags no trigger
+  var trigger=document.getElementById(creditId+'-mod-trigger');
+  var ph=document.getElementById(creditId+'-mod-ph');
+  if(!trigger)return;
+  trigger.querySelectorAll('.ms-tag').forEach(function(t){t.remove();});
+  var labels={
+    nao_aguarda:'Não aguarda homologação',
+    aguarda_homologacao:'Aguarda homologação',
+    aguarda_habilitacao:'Aguarda habilitação',
+    simples:'Simples',
+    modelo50:'Modelo 50%',
+    desagio_flex:'Deságio flexível'
+  };
+  if(sel.size===0){
+    if(ph){ph.style.display='';ph.textContent='Selecione';}
+  } else {
+    if(ph)ph.style.display='none';
+    sel.forEach(function(v){
+      var tag=document.createElement('span');
+      tag.className='ms-tag';
+      tag.textContent=labels[v]||v;
+      trigger.insertBefore(tag,ph);
+    });
+  }
+  // toggle deságio flexível
+  toggleModeloCredit(creditId);
+}
+
+function rmCredit(id){
+  // verifica se está vinculado a alguma movimentação
+  var vinculados=movimentacoesVinculadas(id);
+  if(vinculados.length>0){
+    var errEl=document.getElementById(id+'-error');
+    if(errEl){
+      var labels=vinculados.map(function(mid,i){return'Movimentação '+(i+1);});
+      errEl.textContent='Não é possível remover: este crédito está vinculado a '+labels.join(', ')+'. Desvincule antes de remover.';
+      errEl.style.display='block';
+      setTimeout(function(){if(errEl)errEl.style.display='none';},5000);
+    }
+    return;
+  }
+  var e=document.getElementById(id);
+  if(e)e.remove();
+  delete credits[id];
+  recalcAll();
+}
+
+function rcCredit(id){
+  var bruto=num(document.getElementById(id+'-bruto').value);
+  var ir=num(document.getElementById(id+'-ir').value);
+  var desRaw=document.getElementById(id+'-des').value;
+  var des=parseFloat(desRaw.replace(',','.'))||0;
+  var abat=num(document.getElementById(id+'-abat').value);
+  var ded=bruto-ir;
+  var dep=ded*(1-des/100);
+  var tot=dep-abat;
+  setI(id+'-ded', ded>=0?brl(ded):'');
+  setI(id+'-dep', dep>=0?brl(dep):'');
+  setI(id+'-total', tot>=0?brl(tot):'');
+  // deságio flexível por crédito — verifica se o checkbox existe e está marcado
+  var chkDf=document.getElementById(id+'-chk-df');
+  var dfAtivo=chkDf?chkDf.checked:false;
+  if(dfAtivo){
+    var dfPctRaw=document.getElementById(id+'-df-pct');
+    var dfPct=dfPctRaw?parseFloat(dfPctRaw.value.replace(',','.'))||0:0;
+    var dfDep=tot*(1-dfPct/100);
+    var dfRec=tot-dfDep;
+    setI(id+'-df-dep',brl(dfDep));
+    setI(id+'-df-rec',brl(dfRec));
+    setI(id+'-df-dev',brl(dfRec));
+  }
+  credits[id]={bruto:bruto,ir:ir,desagio:des,abatimento:abat,deduzido:ded,deposito:dep,depTotal:tot};
+  recalcAll();
+}
+
+function recalcAll(){
+  var tB=0,tI=0,tD=0,tA=0,dN=0,dDen=0;
+  Object.keys(credits).forEach(function(id){
+    var c=credits[id];if(!c)return;
+    tB+=c.bruto||0; tI+=c.ir||0; tD+=c.deposito||0; tA+=c.abatimento||0;
+    dN+=(c.desagio||0)*(c.bruto||0); dDen+=c.bruto||0;
+  });
+  var depFinal=tD-tA;
+  var dMed=dDen>0?dN/dDen:0;
+  var receita=tB-depFinal;
+  // Eficiência = Deságio médio real ÷ Deságio alvo
+  var dAlvo=parseFloat((document.getElementById('g-desagio').value||'0').replace(',','.'))||0;
+  var efic=dAlvo>0?dMed/dAlvo*100:0;
+  setT('cf-contrato',brl(tB));
+  setT('cf-desagio',pf(dMed));
+  setT('cf-ir',brl(tI));
+  setT('cf-deposito',brl(tD));
+  setT('cf-abatimento',brl(tA));
+  setT('cf-depfinal',brl(depFinal));
+  setT('cf-eficiencia',dAlvo>0?pf(efic):'—');
+  setT('cf-receita',brl(receita));
+  var eficEl=document.getElementById('cf-eficiencia');
+  if(eficEl&&dAlvo>0){
+    eficEl.style.color=efic>=100?'#27500A':'#A32D2D';
+  } else if(eficEl){
+    eficEl.style.color='';
+  }
+  var totalDed=tB-tI;
+  setT('sv-ref',brl(totalDed));
+  setT('sv-deptotal',brl(depFinal));
+  recalcParc(); updateSum();
+}
+
+// Deságio flexível:
+//   Dep. total flex = Dep. final × (1 − Deságio flex%)
+//   Receita flex = Dep. final − Dep. total flex
+//   Devolução = Dep. final − Dep. total flex
+var parcSelections=new Set();
+
+function toggleParcMs(){
+  var dd=document.getElementById('parc-ms-dd');
+  var trigger=document.getElementById('parc-ms-trigger');
+  if(!dd||!trigger)return;
+  // reconstrói opções com créditos atuais
+  var ids=Object.keys(credits);
+  if(ids.length===0){dd.innerHTML='<div class="ms-none">Nenhum crédito cadastrado</div>';}
+  else{
+    dd.innerHTML=ids.map(function(cid,i){
+      var checked=parcSelections.has(cid)?'checked':'';
+      var bg=parcSelections.has(cid)?'background:#EBF4FD;':'';
+      return '<div class="ms-opt" id="parc-opt-'+cid+'" style="'+bg+'" onclick="toggleParcOpt(\''+cid+'\',this)">'+
+        '<input type="checkbox" '+checked+' onclick="event.stopPropagation()"/> '+
+        '<span>Crédito '+(i+1)+'</span>'+
+        '<span class="ms-opt-meta">'+brl(credits[cid].depTotal||0)+'</span>'+
+      '</div>';
+    }).join('');
+  }
+  var isOpen=dd.classList.contains('open');
+  if(isOpen){dd.classList.remove('open');trigger.classList.remove('open');}
+  else{dd.classList.add('open');trigger.classList.add('open');}
+}
+
+function toggleParcOpt(cid,optEl){
+  var chk=optEl.querySelector('input[type=checkbox]');
+  if(parcSelections.has(cid)){
+    parcSelections.delete(cid);
+    if(chk)chk.checked=false;
+    optEl.style.background='';
+  } else {
+    parcSelections.add(cid);
+    if(chk)chk.checked=true;
+    optEl.style.background='#EBF4FD';
+  }
+  // atualiza tags
+  var trigger=document.getElementById('parc-ms-trigger');
+  var ph=document.getElementById('parc-ms-ph');
+  if(!trigger)return;
+  trigger.querySelectorAll('.ms-tag').forEach(function(t){t.remove();});
+  if(parcSelections.size===0){
+    if(ph){ph.style.display='';ph.textContent='Todos os créditos';}
+  } else {
+    if(ph)ph.style.display='none';
+    var ids=Object.keys(credits);
+    parcSelections.forEach(function(c){
+      var idx=ids.indexOf(c)+1;
+      var tag=document.createElement('span');
+      tag.className='ms-tag';tag.textContent='Crédito '+idx;
+      trigger.insertBefore(tag,ph);
+    });
+  }
+  recalcParc();
+}
+
+function recalcParc(){
+  if(!document.getElementById('chkParc').checked)return;
+  var base=0;
+  if(parcSelections.size===0){
+    base=num(document.getElementById('cf-depfinal').textContent);
+  } else {
+    parcSelections.forEach(function(cid){
+      if(credits[cid])base+=credits[cid].depTotal||0;
+    });
+  }
+  var pPct=parseFloat((document.getElementById('parc-pct').value||'0').replace(',','.'))||0;
+  setI('parc-valor',brl(base*pPct/100));
+}
+
+// ── movimentações ──────────────────────────────────────────────
+var mCount=0;
+// seleções de créditos por movimentação: { movId: Set(creditId) }
+var movSelections={};
+
+function addMov(){
+  mCount++;
+  var n=mCount, id='mov'+n;
+  movSelections[id]=new Set();
+  var d=document.createElement('div');
+  d.className='mov-item';d.id=id;
+  d.innerHTML=
+    '<div class="mov-hd">'+
+      '<select class="tipo-sel" onchange="renderMov(\''+id+'\',this.value)">'+
+        '<option value="">Selecione o tipo</option>'+
+        '<option value="dep">Depósito</option>'+
+        '<option value="rec">Recebimento</option>'+
+        '<option value="dev">Devolução</option>'+
+      '</select>'+
+      '<button class="rm-btn" style="margin-left:auto" onclick="removeMov(\''+id+'\')">Remover</button>'+
+    '</div>'+
+    '<div id="'+id+'-f"></div>';
+  document.getElementById('mov-list').appendChild(d);
+}
+
+function removeMov(id){
+  var e=document.getElementById(id);
+  if(e)e.remove();
+  delete movSelections[id];
+  updateSum();
+}
+
+function renderMov(id,tipo){
+  var c=document.getElementById(id+'-f');
+  if(tipo==='dep'){
+    movSelections[id]=new Set();
+    c.innerHTML=
+      '<div class="row col3">'+
+        '<div class="field"><label>Data do depósito para o cliente</label><input type="date"/></div>'+
+        '<div class="field"><label>Valor depositado ao cliente (R$)</label><input type="text" inputmode="numeric" id="'+id+'-vd" placeholder="R$ 0,00" oninput="maskMoney(this);updateSum()"/></div>'+
+        '<div class="field"><label>Origem do funding</label><select>'+
+          '<option value="">Selecione a origem</option>'+
+          '<option>A verificar</option>'+
+          '<option>Debênture</option>'+
+          '<option>Debênture 1</option>'+
+          '<option>Debênture 2</option>'+
+          '<option>Debênture 3</option>'+
+          '<option>Debênture 4</option>'+
+          '<option>Debênture pago Itaú Movimento</option>'+
+          '<option>Investidores</option>'+
+          '<option>JusCash</option>'+
+          '<option>Strategius</option>'+
+        '</select></div>'+
+      '</div>'+
+      // multiselect créditos no depósito
+      '<div class="field" style="margin-top:8px">'+
+        '<label>Créditos vinculados <span style="font-weight:400;color:#aaa">(opcional)</span></label>'+
+        '<div class="ms-wrap" id="'+id+'-ms-wrap">'+
+          '<div class="ms-trigger" id="'+id+'-ms-trigger" onclick="toggleMs(\''+id+'\')">'+
+            '<span class="placeholder" id="'+id+'-ms-ph">Nenhum crédito vinculado</span>'+
+          '</div>'+
+          '<svg class="ms-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l4 4 4-4"/></svg>'+
+          '<div class="ms-dropdown" id="'+id+'-ms-dd">'+buildMsOptions(id)+'</div>'+
+        '</div>'+
+      '</div>';
+
+  } else if(tipo==='rec'){
+    var irTotal=Object.values(credits).reduce(function(s,c){return s+(c.ir||0);},0);
+    movSelections[id]=new Set();
+
+    c.innerHTML=
+      // valor + data
+      '<div class="row col2">'+
+        '<div class="field"><label>Valor recebido da liquidação</label><input type="text" inputmode="numeric" id="'+id+'-vr" placeholder="R$ 0,00" oninput="maskMoney(this);updateSum();calcPendente(\''+id+'\')"/></div>'+
+        '<div class="field"><label>Data do recebimento</label><input type="date"/></div>'+
+      '</div>'+
+
+      // toggle parcial + campo valor pendente (oculto por padrão)
+      '<div class="toggle-row" style="margin-bottom:4px">'+
+        '<label class="toggle"><input type="checkbox" id="'+id+'-parcial-chk" onchange="toggleParcial(\''+id+'\')"/><span class="tslider"></span></label>'+
+        '<span>Recebimento parcial</span>'+
+      '</div>'+
+      '<div id="'+id+'-pendente-wrap" style="display:none;margin-bottom:12px">'+
+        '<div class="field"><label>Valor pendente</label><input class="calc" type="text" id="'+id+'-pendente" placeholder="R$ 0,00" readonly/></div>'+
+      '</div>'+
+
+      // origem
+      '<div class="field" style="margin-bottom:12px"><label>Origem do recebimento</label>'+
+        '<select>'+
+          '<option value="">Selecione a origem</option>'+
+          '<option>Não definido</option>'+
+          '<option>Abatimento</option>'+
+          '<option>Aditivo</option>'+
+          '<option>Compensação</option>'+
+          '<option>Depósito direto da conta da JusCash</option>'+
+          '<option>Depósito do cliente</option>'+
+          '<option>Direto</option>'+
+          '<option>Do cliente</option>'+
+          '<option>Levantamento BB</option>'+
+          '<option>Levantamento CEF</option>'+
+          '<option>Saque de alvará em agência bancária</option>'+
+        '</select>'+
+      '</div>'+
+
+      // multiselect créditos
+      '<div class="field" style="margin-bottom:12px">'+
+        '<label>Créditos vinculados <span style="font-weight:400;color:#aaa">(opcional)</span></label>'+
+        '<div class="ms-wrap" id="'+id+'-ms-wrap">'+
+          '<div class="ms-trigger" id="'+id+'-ms-trigger" onclick="toggleMs(\''+id+'\')">'+
+            '<span class="placeholder" id="'+id+'-ms-ph">Nenhum crédito vinculado</span>'+
+          '</div>'+
+          '<svg class="ms-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l4 4 4-4"/></svg>'+
+          '<div class="ms-dropdown" id="'+id+'-ms-dd">'+buildMsOptions(id)+'</div>'+
+        '</div>'+
+        '<div class="ms-ir-note" id="'+id+'-ir-note">'+
+          '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M7 6v4M7 4.5v.5"/></svg>'+
+          'IR previsto calculado com todos os créditos. Vincule créditos para calcular apenas os selecionados.'+
+        '</div>'+
+      '</div>'+
+
+      // IR block
+      '<div class="ir-block">'+
+        '<div class="ir-block-title">Imposto de renda</div>'+
+        '<div class="row col3">'+
+          '<div class="field"><label>Desconto de IR previsto</label>'+
+            '<input class="calc" type="text" id="'+id+'-irp" value="'+brl(irTotal)+'" readonly/>'+
+          '</div>'+
+          '<div class="field"><label>Desconto de IR realizado</label>'+
+            '<input type="text" inputmode="numeric" id="'+id+'-irr" placeholder="R$ 0,00" oninput="maskMoney(this);calcIrDevolucao(\''+id+'\')"/>'+
+          '</div>'+
+          '<div class="field"><label>Devolução de IR ao cliente</label>'+
+            '<input class="calc" type="text" id="'+id+'-ird" placeholder="R$ 0,00" readonly/>'+
+          '</div>'+
+        '</div>'+
+        // status + data condicional
+        '<div class="row col2">'+
+          '<div class="field"><label>Status da devolução</label>'+
+            '<select id="'+id+'-ir-status" onchange="toggleIrData(\''+id+'\')">'+
+              '<option value="">Selecione o status</option>'+
+              '<option value="devolver">Devolver</option>'+
+              '<option value="verificar">Verificar com o jurídico</option>'+
+              '<option value="nao_devolver">Não devolver</option>'+
+              '<option value="devolvido">Devolvido</option>'+
+              '<option value="cliente_deve">Cliente deve IR</option>'+
+            '</select>'+
+          '</div>'+
+          '<div class="field" id="'+id+'-ir-data-wrap" style="display:none">'+
+            '<label>Data da devolução</label><input type="date"/>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+
+  } else if(tipo==='dev'){
+    movSelections[id]=new Set();
+    c.innerHTML=
+      '<div class="row col3">'+
+        '<div class="field"><label>Data da devolução</label><input type="date"/></div>'+
+        '<div class="field"><label>Valor devolvido (R$)</label><input type="text" inputmode="numeric" placeholder="R$ 0,00" oninput="maskMoney(this)"/></div>'+
+        '<div class="field"><label>Tipo de devolução</label>'+
+          '<select>'+
+            '<option value="">Selecione</option>'+
+            '<option>IR</option>'+
+            '<option>Deságio flexível</option>'+
+          '</select>'+
+        '</div>'+
+      '</div>'+
+      '<div class="field" style="margin-top:8px">'+
+        '<label>Créditos vinculados <span style="font-weight:400;color:#aaa">(opcional)</span></label>'+
+        '<div class="ms-wrap" id="'+id+'-ms-wrap">'+
+          '<div class="ms-trigger" id="'+id+'-ms-trigger" onclick="toggleMs(\''+id+'\')">'+
+            '<span class="placeholder" id="'+id+'-ms-ph">Nenhum crédito vinculado</span>'+
+          '</div>'+
+          '<svg class="ms-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l4 4 4-4"/></svg>'+
+          '<div class="ms-dropdown" id="'+id+'-ms-dd">'+buildMsOptions(id)+'</div>'+
+        '</div>'+
+      '</div>';
+
+  } else {
+    c.innerHTML='';
+  }
+}
+
+// mostra/oculta campo valor pendente + calcula
+function toggleParcial(id){
+  var chk=document.getElementById(id+'-parcial-chk');
+  var wrap=document.getElementById(id+'-pendente-wrap');
+  if(!chk||!wrap)return;
+  wrap.style.display=chk.checked?'block':'none';
+  if(chk.checked)calcPendente(id);
+}
+
+// valor pendente = depósito final do comercial − valor recebido
+// se créditos vinculados: usa só o total desses créditos; senão usa depFinal geral
+function calcPendente(id){
+  var chk=document.getElementById(id+'-parcial-chk');
+  if(!chk||!chk.checked)return;
+  var sel=movSelections[id];
+  var referencia=0;
+  if(sel&&sel.size>0){
+    sel.forEach(function(cid){if(credits[cid])referencia+=credits[cid].depTotal||0;});
+  } else {
+    var el=document.getElementById('cf-depfinal');
+    referencia=el?num(el.textContent):0;
+  }
+  var recebido=num((document.getElementById(id+'-vr')||{}).value||'');
+  var pendente=referencia-recebido;
+  var el=document.getElementById(id+'-pendente');
+  if(el)el.value=brl(pendente);
+}
+
+// devolução IR = previsto − realizado (pode ser negativo)
+function calcIrDevolucao(id){
+  var prev=num((document.getElementById(id+'-irp')||{}).value||'');
+  var real=num((document.getElementById(id+'-irr')||{}).value||'');
+  var dev=prev-real;
+  var el=document.getElementById(id+'-ird');
+  if(el)el.value=brl(dev);
+}
+
+// exibe data devolução só quando status = Devolver ou Cliente deve IR
+function toggleIrData(id){
+  var sel=document.getElementById(id+'-ir-status');
+  var wrap=document.getElementById(id+'-ir-data-wrap');
+  if(!sel||!wrap)return;
+  var show=sel.value==='devolver'||sel.value==='cliente_deve';
+  wrap.style.display=show?'block':'none';
+}
+
+// constrói as options do multiselect com base nos créditos cadastrados
+function buildMsOptions(movId){
+  var ids=Object.keys(credits);
+  if(ids.length===0) return '<div class="ms-none">Nenhum crédito cadastrado no Comercial</div>';
+  return ids.map(function(cid,i){
+    var c=credits[cid];
+    var cedente=document.querySelector('#'+cid+' select:first-of-type');
+    var tipo=document.querySelector('#'+cid+' select:nth-of-type(2)');
+    var cedLabel=cedente&&cedente.value?cedente.value:'Cedente '+(i+1);
+    var tipoLabel=tipo&&tipo.value?tipo.value:'Crédito '+(i+1);
+    var irLabel=c.ir>0?brl(c.ir):'IR: —';
+    return '<div class="ms-opt" id="'+movId+'-opt-'+cid+'" onclick="toggleMsOpt(\''+movId+'\',\''+cid+'\',this)">'+
+      '<input type="checkbox" id="'+movId+'-chk-'+cid+'" onclick="event.stopPropagation()"/>'+
+      '<span>'+cedLabel+' — '+tipoLabel+'</span>'+
+      '<span class="ms-opt-meta">'+irLabel+'</span>'+
+    '</div>';
+  }).join('');
+}
+
+function toggleMs(movId){
+  var trigger=document.getElementById(movId+'-ms-trigger');
+  var dd=document.getElementById(movId+'-ms-dd');
+  if(!trigger||!dd)return;
+  var isOpen=dd.classList.contains('open');
+  if(isOpen){closeMs(movId);}
+  else{
+    // reconstrói options caso créditos tenham mudado
+    dd.innerHTML=buildMsOptions(movId);
+    // remarca os já selecionados
+    (movSelections[movId]||new Set()).forEach(function(cid){
+      var chk=document.getElementById(movId+'-chk-'+cid);
+      var opt=document.getElementById(movId+'-opt-'+cid);
+      if(chk)chk.checked=true;
+      if(opt)opt.style.background='#EBF4FD';
+    });
+    dd.classList.add('open');
+    trigger.classList.add('open');
+  }
+}
+
+function closeMs(movId){
+  var trigger=document.getElementById(movId+'-ms-trigger');
+  var dd=document.getElementById(movId+'-ms-dd');
+  if(trigger)trigger.classList.remove('open');
+  if(dd)dd.classList.remove('open');
+}
+
+function toggleMsOpt(movId,cid,optEl){
+  var sel=movSelections[movId];
+  if(!sel)return;
+  var chk=document.getElementById(movId+'-chk-'+cid);
+  if(sel.has(cid)){
+    sel.delete(cid);
+    if(chk)chk.checked=false;
+    optEl.style.background='';
+  } else {
+    sel.add(cid);
+    if(chk)chk.checked=true;
+    optEl.style.background='#EBF4FD';
+  }
+  updateMsTags(movId);
+  updateIrPrevisto(movId);
+}
+
+function updateMsTags(movId){
+  var sel=movSelections[movId];
+  var trigger=document.getElementById(movId+'-ms-trigger');
+  var ph=document.getElementById(movId+'-ms-ph');
+  if(!trigger||!sel)return;
+
+  // remove tags antigas
+  trigger.querySelectorAll('.ms-tag').forEach(function(t){t.remove();});
+
+  if(sel.size===0){
+    if(ph){ph.style.display='';ph.textContent='Nenhum crédito vinculado';}
+  } else {
+    if(ph)ph.style.display='none';
+    sel.forEach(function(cid,i){
+      var c=credits[cid];
+      var idx=Object.keys(credits).indexOf(cid)+1;
+      var tag=document.createElement('span');
+      tag.className='ms-tag';
+      tag.id=movId+'-tag-'+cid;
+      tag.innerHTML='Crédito '+idx+' <button onclick="removeMsTag(\''+movId+'\',\''+cid+'\',event)">×</button>';
+      trigger.insertBefore(tag,ph);
+    });
+  }
+
+  // atualiza nota
+  var note=document.getElementById(movId+'-ir-note');
+  if(note){
+    note.style.display=sel.size>0?'none':'flex';
+  }
+}
+
+function removeMsTag(movId,cid,evt){
+  evt.stopPropagation();
+  var sel=movSelections[movId];
+  if(sel)sel.delete(cid);
+  var chk=document.getElementById(movId+'-chk-'+cid);
+  var opt=document.getElementById(movId+'-opt-'+cid);
+  if(chk)chk.checked=false;
+  if(opt)opt.style.background='';
+  updateMsTags(movId);
+  updateIrPrevisto(movId);
+}
+
+// recalcula IR previsto com base nos créditos selecionados (ou todos se nenhum)
+function updateIrPrevisto(movId){
+  var sel=movSelections[movId];
+  var irEl=document.getElementById(movId+'-irp');
+  if(!irEl)return;
+  var irVal=0;
+  if(!sel||sel.size===0){
+    irVal=Object.values(credits).reduce(function(s,c){return s+(c.ir||0);},0);
+  } else {
+    sel.forEach(function(cid){if(credits[cid])irVal+=credits[cid].ir||0;});
+  }
+  irEl.value=brl(irVal);
+  calcIrDevolucao(movId);
+  calcPendente(movId);
+}
+
+function updateSum(){
+  var deps=0,recs=0;
+  document.querySelectorAll('[id$="-vd"]').forEach(function(e){deps+=num(e.value);});
+  document.querySelectorAll('[id$="-vr"]').forEach(function(e){recs+=num(e.value);});
+  // saldo = Σ valor deduzido IR (o que o juiz deve pagar) − total já recebido
+  var totalDed=Object.values(credits).reduce(function(s,c){return s+(c.deduzido||0);},0);
+  var saldo=totalDed-recs;
+  setT('sv-dep',brl(deps));
+  setT('sv-rec',brl(recs));
+  setT('sv-saldo',brl(saldo));
+  var saldoEl=document.getElementById('sv-saldo');
+  if(saldoEl)saldoEl.style.color=saldo<=0?'#27500A':'#A32D2D';
+}
+
+// ── FASES PROCESSUAIS ─────────────────────────────────────────
+var FASES={
+  publico:[
+    '1. Feita petição inicial de execução (autor)',
+    '2. Feita a impugnação (executado)',
+    '3. Feita a manifestação (autor)',
+    '4. Sentença proferida',
+    '5. Recurso apresentado',
+    '6. Acórdão proferido',
+    '7.1. Cálculo homologado, ainda sem petição',
+    '7.2. Cálculo homologado, já com petição',
+    '8. Feito o mandado de expedição de RPV / Alvará',
+    '8.1 Apresentado ofício requisitório (demonstrativo RPV)',
+    '9. RPV / Alvará expedido'
+  ],
+  privado_concordancia:[
+    '1. Feita petição inicial de execução (autor) / Feito Depósito (executado)',
+    '2. Decisão - Recebimento da Execução / Decisão - Intimação Autor do Depósito',
+    'Concordância - 3. Depósito (executado) / Concordância autor',
+    'Concordância - 4. Sentença proferida',
+    'Concordância - 5. Petição de Alvará',
+    'Concordância - 6. Decisão de Extinção e Determinado o Alvará',
+    'Concordância - 7. Alvará expedido'
+  ],
+  privado_discordancia:[
+    '1. Feita petição inicial de execução (autor) / Feito Depósito (executado)',
+    '2. Decisão - Recebimento da Execução / Decisão - Intimação Autor do Depósito',
+    'Discordância - 3. Depósito em Garantia (executado) / Impugnação iniciando execução do excedente (autor)',
+    'Discordância - 4. Feita a impugnação (executado)',
+    'Discordância - 5. Sentença proferida',
+    'Discordância - 6. Recurso apresentado',
+    'Discordância - 7. Acórdão proferido',
+    'Discordância - 8.1. Petição de Alvará com ou sem pedido de Remanescente',
+    'Discordância - 8.2. Concordância do Devedor e depósito complementar',
+    'Discordância - 9. Decisão de Extinção e Determinado o Alvará',
+    'Discordância - 10. Alvará expedido'
+  ],
+  pericial:[
+    'Fase 1 - Nomeação do perito',
+    'Fase 2 - Decisão homologando valor do perito',
+    'Fase 3 - Perícia agendada',
+    'Fase 4 - Laudo entregue',
+    'Fase 5 (Concordância) - Concordância com o laudo',
+    'Fase 6 (Concordância) - Decisão homologando o laudo',
+    'Fase 7 (Concordância) - Petição de expedição alvará/RPV',
+    'Fase 8 (Concordância) - RPV expedido',
+    'Fase 9 (Concordância) - Alvará expedido',
+    'Fase 5 (Discordância) - Impugnação do laudo',
+    'Fase 6 (Discordância) - Laudo complementar',
+    'Fase 7 (Discordância) - Manifestação das partes/decisão homologando o laudo',
+    'Fase 8 (Discordância) - Petição de expedição alvará/RPV',
+    'Fase 9 (Discordância) - RPV expedido',
+    'Fase 10 (Discordância) - Alvará expedido'
+  ],
+  pericial_concordancia:[
+    'Fase 1 - Nomeação do perito',
+    'Fase 2 - Decisão homologando valor do perito',
+    'Fase 3 - Perícia agendada',
+    'Fase 4 - Laudo entregue',
+    'Fase 5 - Concordância com o laudo',
+    'Fase 6 - Decisão homologando o laudo',
+    'Fase 7 - Petição de expedição alvará/RPV',
+    'Fase 8 - RPV expedido',
+    'Fase 9 - Alvará expedido'
+  ],
+  pericial_discordancia:[
+    'Fase 1 - Nomeação do perito',
+    'Fase 2 - Decisão homologando valor do perito',
+    'Fase 3 - Perícia agendada',
+    'Fase 4 - Laudo entregue',
+    'Fase 5 - Impugnação do laudo',
+    'Fase 6 - Laudo complementar',
+    'Fase 7 - Manifestação das partes/decisão homologando o laudo',
+    'Fase 8 - Petição de expedição alvará/RPV',
+    'Fase 9 - RPV expedido',
+    'Fase 10 - Alvará expedido'
+  ]
+};
+
+function updateFaseProcessual(){
+  var tipoReu=document.getElementById('tipo-reu');
+  var faseSelect=document.getElementById('fase-processual');
+  if(!tipoReu||!faseSelect)return;
+  var tr=tipoReu.value;
+  var lista=FASES[tr]||[];
+  var current=faseSelect.value;
+  faseSelect.innerHTML='<option value="">Selecione</option>';
+  if(lista.length===0){
+    faseSelect.innerHTML='<option value="">Selecione o tipo do réu primeiro</option>';
+    return;
+  }
+  lista.forEach(function(f){
+    var opt=document.createElement('option');
+    opt.value=f; opt.textContent=f;
+    if(f===current) opt.selected=true;
+    faseSelect.appendChild(opt);
+  });
+}
+
+// inicia com 1 crédito
+addCredit();
+
+// fecha qualquer multiselect aberto ao clicar fora
+document.addEventListener('click',function(e){
+  document.querySelectorAll('.ms-wrap').forEach(function(wrap){
+    if(!wrap.contains(e.target)){
+      var dd=wrap.querySelector('.ms-dropdown');
+      var tr=wrap.querySelector('.ms-trigger');
+      if(dd)dd.classList.remove('open');
+      if(tr)tr.classList.remove('open');
+    }
+  });
+});
+</script>
+</body>
+</html>

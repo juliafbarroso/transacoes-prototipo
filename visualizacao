@@ -3,1318 +3,1124 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>SIJ — Editar transação</title>
+<title>SIJ — Transação</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:#1a1a1a;background:#f0f0ed;min-height:100vh;display:flex;flex-direction:column;overflow:auto}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,sans-serif;font-size:13px;color:#262626;background:#F5F5F5;min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:#0D2D42;height:48px;display:flex;align-items:center;padding:0 20px;gap:10px;flex-shrink:0}
+.logo{font-size:14px;font-weight:600;color:#fff}
+.ds-badge{background:#093671;color:#B5D4F4;font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;letter-spacing:.05em}
+.shell{display:flex;flex-direction:column;flex:1;overflow:hidden}
+.subhd{background:#fff;border-bottom:.5px solid #D4D4D4;padding:0 20px;flex-shrink:0}
+.bc{font-size:11px;color:#6D6D6E;display:flex;align-items:center;gap:5px;padding:10px 0 5px}
+.bc b{color:#262626;font-weight:500}
+.bc .sep{color:#A3A3A3}
+.strow{display:flex;align-items:center;justify-content:space-between;padding:5px 0 8px}
+.strow-left{display:flex;align-items:center;gap:8px}
+.strow-right{display:flex;align-items:center;gap:8px}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:9999px}
+.pill-warn{background:#FFFBE0;color:#867400}
+.pill-open{background:#F5F5F5;color:#6D6D6E}
+.tabs{display:flex}
+.tab{padding:9px 18px;font-size:12px;border:none;background:none;cursor:pointer;color:#6D6D6E;border-bottom:2px solid transparent;font-family:inherit}
+.tab:hover{color:#262626}
+.tab.on{color:#008633;border-bottom-color:#008633;font-weight:600}
+.main{flex:1;overflow:auto;padding:16px 20px}
+.panel{display:none}
+.panel.on{display:block}
 
-/* topbar global */
-.topbar{background:#0D2D42;height:48px;display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0}
-.logo{display:flex;align-items:center;gap:8px}
-.logo-icon{width:28px;height:28px;background:rgba(255,255,255,0.15);border-radius:6px;display:flex;align-items:center;justify-content:center}
-.logo-icon svg{width:16px;height:16px;fill:#fff}
-.logo-name{font-size:14px;font-weight:600;color:#fff}
-.logo-badge{font-size:10px;background:#1e5f8a;color:#a8d4f0;padding:2px 7px;border-radius:4px;font-weight:600;letter-spacing:0.04em}
-.topbar-nav{display:flex;gap:2px;margin-left:8px}
-.tnav{padding:6px 12px;font-size:12px;color:rgba(255,255,255,0.6);cursor:pointer;border-radius:5px;display:flex;align-items:center;gap:7px}
-.tnav:hover{background:rgba(255,255,255,0.08);color:#fff}
-.tnav-icon{width:14px;height:14px;opacity:0.7}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
-.notif{width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.6);cursor:pointer}
-.user-chip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border-radius:6px;padding:4px 8px;cursor:pointer}
-.user-chip span{font-size:12px;font-weight:600;color:#fff}
+/* layout resumo */
+.resumo-grid{display:grid;grid-template-columns:280px 1fr;gap:14px;align-items:start}
 
-/* page shell */
-.shell{display:flex;flex-direction:column;flex:1}
+/* cards */
+.card{background:#fff;border:.5px solid #D4D4D4;border-radius:12px;overflow:hidden;margin-bottom:12px}
+.card:last-child{margin-bottom:0}
+.card-hd{padding:12px 16px;border-bottom:.5px solid #F0F0F0;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.card-hd:hover{background:#FAFAFA}
+.card-title{font-size:13px;font-weight:600;color:#262626}
+.card-body{padding:16px}
 
-/* page header area */
-.page-top{background:#fff;border-bottom:1px solid #e8e8e3;flex-shrink:0}
-.page-hd{display:flex;align-items:center;justify-content:space-between;padding:10px 24px}
-.breadcrumb{font-size:12px;color:#888;display:flex;align-items:center;gap:5px}
-.breadcrumb .sep{color:#ccc}
-.breadcrumb strong{color:#1a1a1a;font-weight:500}
-.hd-right{display:flex;align-items:center;gap:8px}
-.btn{height:32px;padding:0 16px;border-radius:6px;font-size:13px;cursor:pointer;border:1px solid #d5d5d0;background:#fff;color:#333;font-weight:500}
-.btn:hover{background:#f5f5f3}
-.btn-primary{background:#1558A0;color:#fff;border-color:#1558A0}
-.btn-primary:hover{background:#1048890}
+/* campos */
+.lbl{font-size:10px;color:#A3A3A3;display:block;margin-bottom:2px;letter-spacing:.02em}
+.val{font-size:12px;color:#262626;font-weight:500;line-height:1.4;display:block}
+.val-link{font-size:12px;color:#185FA5;font-weight:500;cursor:pointer}
+.val-link:hover{text-decoration:underline}
+.frow{margin-bottom:10px}
+.divider{height:.5px;background:#F0F0F0;margin:12px 0}
+.sec-lbl{font-size:10px;font-weight:600;color:#A3A3A3;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 16px;margin-bottom:10px}
+.icon-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:10px}
+.icon-wrap{margin-top:1px;flex-shrink:0;color:#A3A3A3}
 
-/* abas */
-.tabs-bar{display:flex;padding:0 24px;border-bottom:1px solid #e8e8e3;background:#fff}
-.tab{padding:12px 20px;font-size:13px;color:#888;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
-.tab:hover{color:#333}
-.tab.active{color:#1558A0;border-bottom-color:#1558A0;font-weight:500}
+/* processo card esquerda */
+.proc-num{font-size:13px;font-weight:700;color:#262626;line-height:1.3;word-break:break-all}
+.risco-row{display:flex;align-items:center;gap:6px;padding:6px 0;font-size:11px;color:#6D6D6E}
 
-/* main scroll */
-.main{flex:1;padding:20px 24px}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
+/* créditos lista */
+.credito-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:.5px solid #F0F0F0;cursor:pointer}
+.credito-row:last-child{border-bottom:none}
+.credito-row:hover{background:#FAFAFA;margin:0 -16px;padding:10px 16px}
+.credito-num{width:22px;height:22px;border-radius:50%;background:#0D2D42;color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.credito-info{flex:1;min-width:0}
+.credito-cedente{font-size:12px;font-weight:600;color:#262626}
+.credito-tipo{font-size:11px;color:#6D6D6E;margin-top:1px}
+.credito-vals{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0}
+.credito-dep{font-size:12px;font-weight:600;color:#0C447C}
+.tag{display:inline-flex;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600}
+.tag-open{background:#FFFBE0;color:#867400}
+.tag-wait-pay{background:#E6F1FB;color:#0C447C}
+.tag-wait-rec{background:#EAF3DE;color:#3B6D11}
+.tag-done{background:#EAF3DE;color:#3B6D11}
+.tag-lost{background:#FCEBEB;color:#A32D2D}
+.tag-cancel{background:#F5F5F5;color:#6D6D6E}
+.tag-modelo{background:#F5F5F5;color:#525252;font-weight:500}
+.vinc-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:.5px solid #F0F0F0;font-size:11px}
+.vinc-row:last-child{border-bottom:none}
+.vinc-tag{background:#F5F5F5;color:#6D6D6E;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:500}
 
-/* card/section */
-.card{background:#fff;border:1px solid #e8e8e3;border-radius:10px;margin-bottom:12px;overflow:hidden}
-.card-hd{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;cursor:pointer;user-select:none}
-.card-hd:hover{background:#fafaf8}
-.card-title{font-size:14px;font-weight:500;color:#1a1a1a}
-.chev{color:#aaa;transition:transform 0.18s;display:flex}
-.card.collapsed .chev{transform:rotate(-90deg)}
-.card-body{padding:20px;border-top:1px solid #f0f0ed}
-.card.collapsed .card-body{display:none}
+/* registros */
+.reg-input-wrap{border:.5px solid #D4D4D4;border-radius:10px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.reg-textarea{flex:1;border:none;outline:none;resize:none;font-size:12px;color:#262626;background:transparent;font-family:inherit;min-height:36px}
+.reg-textarea::placeholder{color:#A3A3A3}
+.reg-filters{display:flex;gap:6px;margin-bottom:10px}
+.reg-btn{padding:3px 10px;border-radius:9999px;font-size:11px;border:.5px solid #D4D4D4;background:#fff;cursor:pointer;color:#6D6D6E;font-family:inherit}
+.reg-btn.on{background:#EAF3DE;color:#3B6D11;border-color:#639922;font-weight:600}
+.search-wrap{position:relative;margin-bottom:8px}
+.search-input{width:100%;height:30px;border:.5px solid #D4D4D4;border-radius:8px;padding:0 32px 0 28px;font-size:11px;color:#262626;background:#fff;outline:none;font-family:inherit}
+.hint{font-size:10px;color:#A3A3A3;margin-bottom:10px}
+.reg-card{border:.5px solid #D4D4D4;border-radius:10px;margin-bottom:8px;overflow:hidden}
+.avatar{width:28px;height:28px;border-radius:50%;background:#B5D4F4;color:#0C447C;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.avatar.g{background:#C0DD97;color:#3B6D11}
+.avatar.sm{width:22px;height:22px;font-size:9px}
+.mention{background:#E6F1FB;color:#185FA5;border-radius:3px;padding:1px 4px;font-size:11px;font-weight:500}
+.link-tag{color:#185FA5;font-size:11px;font-weight:500}
+.reply-card{background:#FAFAFA;border:.5px solid #E5E5E5;border-radius:8px;padding:9px 11px;margin-top:7px}
+.reply-btn{background:none;border:none;cursor:pointer;color:#6D6D6E;font-size:11px;display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:0;font-family:inherit}
+.alt-card{background:#FAFAFA;border:.5px solid #E5E5E5;border-radius:8px;padding:10px 12px;margin-bottom:8px}
 
-/* form */
-.row{display:grid;gap:12px;margin-bottom:12px}
-.row:last-child{margin-bottom:0}
-.col2{grid-template-columns:1fr 1fr}
-.col3{grid-template-columns:1fr 1fr 1fr}
-.col4{grid-template-columns:repeat(4,minmax(0,1fr))}
-.col5{grid-template-columns:repeat(5,minmax(0,1fr))}
+/* comercial */
+.comercial-grid{display:flex;flex-direction:column;gap:12px}
+.credito-detail{border:.5px solid #D4D4D4;border-radius:12px;overflow:hidden;background:#fff;margin-bottom:0}
+.credito-detail-hd{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:.5px solid #F0F0F0;cursor:pointer;user-select:none;background:#FAFAFA}
+.credito-detail-hd:hover{background:#F5F5F5}
+.credito-detail-body{padding:16px}
+.calc-block{background:#F5F5F5;border-radius:8px;padding:12px 14px;margin-top:14px;border:.5px solid #E5E5E5}
+.calc-title{font-size:10px;font-weight:600;color:#A3A3A3;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.ci label{font-size:10px;color:#A3A3A3;display:block;margin-bottom:2px}
+.ci span{font-size:13px;font-weight:600;color:#262626}
+.ci span.hl{color:#0C447C}
+.calc-divider{grid-column:1/-1;height:.5px;background:#E5E5E5;margin:2px 0}
+.exc-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.exc-tag{background:#FAEEDA;color:#633806;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:500}
+.df-block{background:#EBF4FD;border:.5px solid #85B7EB;border-radius:8px;padding:12px 14px;margin-top:10px}
+.df-title{font-size:10px;font-weight:600;color:#0C447C;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
 
-.field{display:flex;flex-direction:column;gap:5px}
-.field label{font-size:12px;color:#555;font-weight:500}
-.field input,.field select{
-  height:36px;border:1px solid #d5d5d0;border-radius:6px;
-  padding:0 12px;font-size:13px;background:#fff;color:#1a1a1a;width:100%;
-  transition:border-color 0.15s
-}
-.field input.calc{background:#f7f7f5;color:#666;cursor:default;border-color:#e8e8e3}
-.field input.hilite{background:#EBF4FD;border-color:#85B7EB;color:#0C447C;font-weight:600}
-.field input:focus,.field select:focus{outline:none;border-color:#1558A0;box-shadow:0 0 0 3px rgba(21,88,160,0.08)}
+/* consolidado financeiro */
+.consolidated{background:#fff;border:.5px solid #D4D4D4;border-radius:12px;padding:16px;margin-bottom:12px}
+.consolidated-title{font-size:13px;font-weight:600;color:#262626;margin-bottom:12px}
 
-/* credit rows */
-.credit-item{border:1px solid #eaeae5;border-radius:8px;padding:14px;margin-bottom:8px;background:#fafaf8}
-.credit-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.credit-lbl{font-size:12px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:0.05em}
-.rm-btn{font-size:12px;color:#b03535;background:none;border:none;cursor:pointer;padding:3px 8px;border-radius:5px}
-.rm-btn:hover{background:#fdf0f0}
-.add-btn{width:100%;height:36px;display:flex;align-items:center;justify-content:center;gap:7px;
-  border:1px dashed #c8c8c3;border-radius:6px;background:none;font-size:13px;color:#666;cursor:pointer;margin-top:10px}
-.add-btn:hover{border-color:#1558A0;color:#1558A0;background:#EBF4FD}
+/* parceria */
+.parceria-block{background:#FAEEDA;border:.5px solid #FAC775;border-radius:8px;padding:12px 14px;margin-top:10px}
+.parceria-title{font-size:10px;font-weight:600;color:#633806;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
 
-/* calc final */
-.calc-final{background:#f5f5f3;border-radius:8px;padding:14px 16px;margin-top:14px;border:1px solid #e8e8e3}
-.calc-final-title{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px}
-.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.ci label{font-size:11px;color:#999;display:block;margin-bottom:3px}
-.ci span{font-size:14px;font-weight:600;color:#1a1a1a}
-.ci span.muted{color:#bbb;font-weight:400;font-style:italic;font-size:12px}
-.calc-divider{grid-column:1/-1;height:1px;background:#e8e8e3;margin:2px 0}
-
-/* exceções */
-.exc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
-.chk-row{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:13px;cursor:pointer;color:#333;border-bottom:1px solid #f5f5f3}
-.chk-row:last-child,.chk-row:nth-last-child(2){border-bottom:none}
-.chk-row input[type=checkbox]{width:14px;height:14px;accent-color:#1558A0;cursor:pointer;flex-shrink:0}
-
-/* expand blocks */
-.expand-info{border:1px solid #B5D4F4;background:#EBF4FD;border-radius:8px;padding:14px;margin-top:12px}
-.expand-info-title{font-size:11px;font-weight:600;color:#0C447C;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px}
-.expand-warn{border:1px solid #FAC775;background:#FAEEDA;border-radius:8px;padding:14px;margin-top:12px}
-.expand-warn-title{font-size:11px;font-weight:600;color:#633806;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px}
-
-/* movimentações */
-.mov-item{border:1px solid #eaeae5;border-radius:8px;padding:14px;margin-bottom:8px}
-.mov-hd{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.tipo-sel{height:32px;border:1px solid #d5d5d0;border-radius:6px;padding:0 10px;font-size:12px;background:#fff;color:#1a1a1a}
-.badge-dep{display:inline-flex;align-items:center;height:22px;padding:0 10px;border-radius:11px;font-size:11px;font-weight:600;background:#EAF3DE;color:#27500A}
-.badge-rec{display:inline-flex;align-items:center;height:22px;padding:0 10px;border-radius:11px;font-size:11px;font-weight:600;background:#E6F1FB;color:#0C447C}
-
-/* toggle */
-.toggle-row{display:flex;align-items:center;gap:9px;font-size:13px;color:#555;padding:8px 0}
-.toggle{position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0}
-.toggle input{opacity:0;width:0;height:0}
-.tslider{position:absolute;inset:0;background:#ccc;border-radius:10px;cursor:pointer;transition:.15s}
-.tslider:before{content:"";position:absolute;width:16px;height:16px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.15s;box-shadow:0 1px 3px rgba(0,0,0,0.25)}
-input:checked+.tslider{background:#1558A0}
-input:checked+.tslider:before{transform:translateX(16px)}
-
-/* IR block */
-.ir-block{border-top:1px solid #eaeae5;margin-top:12px;padding-top:12px}
-.ir-block-title{font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px}
-
-/* sum bar */
-.sum-bar{display:flex;gap:24px;background:#f5f5f3;border-radius:8px;padding:12px 16px;margin-top:12px;flex-wrap:wrap;border:1px solid #e8e8e3}
-.sum-it label{font-size:11px;color:#999;display:block;margin-bottom:2px}
-.sum-it span{font-size:13px;font-weight:600;color:#1a1a1a}
-
-/* section divider label */
-.section-sub{font-size:12px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #f0f0ed}
-
-/* multiselect de créditos */
-.ms-wrap{position:relative}
-.ms-trigger{min-height:36px;border:1px solid #d5d5d0;border-radius:6px;padding:4px 32px 4px 10px;font-size:13px;background:#fff;color:#1a1a1a;width:100%;cursor:pointer;display:flex;flex-wrap:wrap;gap:4px;align-items:center;transition:border-color 0.15s;user-select:none}
-.ms-trigger:hover{border-color:#aaa}
-.ms-trigger.open{border-color:#1558A0;box-shadow:0 0 0 3px rgba(21,88,160,0.08)}
-.ms-trigger .placeholder{color:#aaa;font-size:13px}
-.ms-arrow{position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:#888;transition:transform 0.15s}
-.ms-trigger.open+.ms-arrow{transform:translateY(-50%) rotate(180deg)}
-.ms-tag{display:inline-flex;align-items:center;gap:5px;background:#E6F1FB;color:#0C447C;border-radius:4px;padding:2px 7px;font-size:12px;font-weight:500;white-space:nowrap}
-.ms-tag button{background:none;border:none;color:#0C447C;cursor:pointer;font-size:13px;padding:0;line-height:1;opacity:0.7}
-.ms-tag button:hover{opacity:1}
-.ms-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid #d5d5d0;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.10);z-index:100;overflow:hidden;display:none}
-.ms-dropdown.open{display:block}
-.ms-opt{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;font-size:13px;color:#333;transition:background 0.1s}
-.ms-opt:hover{background:#f5f5f3}
-.ms-opt input[type=checkbox]{width:14px;height:14px;accent-color:#1558A0;flex-shrink:0;cursor:pointer}
-.ms-opt-meta{font-size:11px;color:#999;margin-left:auto}
-.ms-none{padding:10px 12px;font-size:12px;color:#aaa;font-style:italic}
-.ms-ir-note{background:#f5f5f3;border-radius:6px;padding:8px 10px;font-size:12px;color:#666;margin-top:8px;display:flex;align-items:center;gap:6px}
-.ms-ir-note svg{flex-shrink:0;color:#999}
-.modelo-wrap{border:1px solid #d5d5d0;border-radius:6px;padding:8px 12px;background:#fff;display:flex;flex-direction:column;gap:6px}
-.modelo-chk{display:flex;align-items:center;gap:8px;font-size:13px;color:#333;cursor:pointer;user-select:none}
-.modelo-chk input[type=checkbox]{width:14px;height:14px;accent-color:#1558A0;cursor:pointer;flex-shrink:0}
+button.icon-btn{background:none;border:none;cursor:pointer;color:#A3A3A3;display:flex;align-items:center}
+button.icon-btn:hover{color:#262626}
+.edit-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:6px;border:.5px solid #D4D4D4;background:#fff;font-size:11px;font-weight:500;cursor:pointer;color:#262626;font-family:inherit}
+.edit-btn:hover{background:#F5F5F5}
 </style>
 </head>
 <body>
 
-<!-- global topbar -->
 <div class="topbar">
-  <div class="logo">
-    <div class="logo-icon"><svg viewBox="0 0 16 16"><path d="M3 3h10v10H3z" fill-opacity="0.3"/><path d="M5 5h6v6H5z"/></svg></div>
-    <span class="logo-name">JusCash</span>
-    <span class="logo-badge">SIJ</span>
-  </div>
-  <div class="topbar-nav">
-    <div class="tnav">
-      <svg class="tnav-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="5" height="5" rx="1"/><rect x="8" y="1" width="5" height="5" rx="1"/><rect x="1" y="8" width="5" height="5" rx="1"/><rect x="8" y="8" width="5" height="5" rx="1"/></svg>
-      JusDash
-    </div>
-    <div class="tnav" style="color:#fff;background:rgba(255,255,255,0.12)">
-      <svg class="tnav-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2h10v10H2z"/><path d="M2 5h10M5 5v7"/></svg>
-      Comercial
-    </div>
-    <div class="tnav">
-      <svg class="tnav-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M7 4v3l2 2"/></svg>
-      Jurídico
-    </div>
-  </div>
-  <div class="topbar-right">
-    <div class="notif">
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 2a5 5 0 015 5v3l1.5 2.5H2.5L4 10V7a5 5 0 015-5z"/><path d="M7 14.5a2 2 0 004 0"/></svg>
-    </div>
-    <div class="user-chip"><span>CN</span><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></div>
-  </div>
+  <span class="logo">JusCash</span>
+  <span class="ds-badge">SIJ</span>
 </div>
 
+<div id="mode-vis" style="display:flex;flex-direction:column;flex:1">
 <div class="shell">
-  <div class="page-top">
-    <div class="page-hd">
-      <div class="breadcrumb">
-        <span>Transações</span><span class="sep">›</span>
-        <span>Transação</span><span class="sep">›</span>
-        <strong>Editar transação</strong>
+  <div class="subhd">
+    <div class="bc">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L4 6l4 4"/></svg>
+      <span>Transações</span><span class="sep">›</span><b>Transação</b>
+    </div>
+    <div class="strow">
+      <div class="strow-left">
+        <span class="pill pill-warn">Em andamento</span>
+        <span style="font-size:11px;color:#A3A3A3">2 créditos · 1 aguarda pagamento</span>
       </div>
-      <div class="hd-right">
-        <button class="btn">Cancelar e voltar</button>
-        <button class="btn btn-primary">Salvar</button>
+      <div class="strow-right">
+        <button class="edit-btn" onclick="setMode('edit')">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8.5 1.5l2 2L3 11H1v-2L8.5 1.5z"/></svg>
+          Editar transação
+        </button>
       </div>
     </div>
-    <div class="tabs-bar">
-      <div class="tab" id="tab-btn-processo" onclick="goTab('processo')">Informações do processo</div>
-      <div class="tab active" id="tab-btn-comercial" onclick="goTab('comercial')">Comercial</div>
-      <div class="tab" id="tab-btn-financeiro" onclick="goTab('financeiro')">Financeiro</div>
+    <div class="tabs">
+      <button class="tab on" onclick="goTab('resumo',this)">Resumo</button>
+      <button class="tab" onclick="goTab('comercial',this)">Comercial</button>
+      <button class="tab" onclick="goTab('financeiro',this)">Financeiro</button>
+      <button class="tab" onclick="goTab('infos',this)">Informações adicionais</button>
+      <button class="tab" onclick="goTab('anexos',this)">Anexos</button>
     </div>
   </div>
 
   <div class="main">
 
-    <!-- ══════════════ PROCESSO ══════════════ -->
-    <div id="tab-processo" class="tab-panel">
-      <div class="card">
-        <div class="card-hd" onclick="togCard(this.parentElement)">
-          <span class="card-title">Informações do processo</span>
-          <span class="chev"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l5 5 5-5"/></svg></span>
-        </div>
-        <div class="card-body">
-          <div class="row col2">
-            <div class="field"><label>Número do processo</label><input type="text" value="0600363-91.2024.8.04.5600"/></div>
-            <div class="field"><label>Número do cumprimento de sentença</label><input type="text" placeholder=""/></div>
-          </div>
-          <div class="row col3">
-            <div class="field"><label>Número do RPV</label><input type="text"/></div>
-            <div class="field"><label>Esfera</label><select><option>Selecione</option><option>Cível</option><option>Federal</option><option>Trabalhista</option></select></div>
-            <div class="field"><label>Grau de jurisdição</label><select><option>Selecione</option><option>1ª instância</option><option>2ª instância</option></select></div>
-          </div>
-          <div class="row col2">
-            <div class="field"><label>Tribunal de tramitação</label><input type="text" value="TJAM"/></div>
-            <div class="field"><label>Unidade judiciária</label><input type="text" value="3ª Unidade — Previdenciário"/></div>
-          </div>
-          <div class="row col2">
-            <div class="field"><label>Rito</label><select><option>Selecione</option><option>Comum</option><option>Sumaríssimo</option></select></div>
-            <div class="field"><label>Tipo do réu</label>
-              <select id="tipo-reu" onchange="updateFaseProcessual()">
-                <option value="">Selecione</option>
-                <option value="publico">Público</option>
-                <option value="privado_concordancia">Privado — Concordância</option>
-                <option value="privado_discordancia">Privado — Discordância</option>
-                <option value="pericial_concordancia">Privado — Concordância (periciais)</option>
-                <option value="pericial_discordancia">Privado — Discordância (periciais)</option>
-              </select>
-            </div>
-          </div>
-          <div class="row col3">
-            <div class="field"><label>UF</label><select><option>AM</option><option>SP</option><option>RJ</option><option>MG</option></select></div>
-            <div class="field"><label>ID iiLex</label><input type="text" placeholder="Cadastrar no iiLex"/></div>
-            <div></div>
-          </div>
-          <div class="row col2" style="margin-top:4px">
-            <div class="field">
-              <label>Fase processual</label>
-              <select id="fase-processual">
-                <option value="">Selecione o tipo do réu primeiro</option>
-              </select>
-            </div>
-            <div></div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- ══ RESUMO ══ -->
+    <div class="panel on" id="panel-resumo">
+      <div class="resumo-grid">
 
-    <!-- ══════════════ COMERCIAL ══════════════ -->
-    <div id="tab-comercial" class="tab-panel active">
+        <!-- col esquerda -->
+        <div>
+          <div class="card">
+            <div class="card-body">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px">
+                <span class="proc-num">0000000-00.0000.0.00.0000</span>
+                <button class="icon-btn"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="3" cy="7.5" r="1.2"/><circle cx="7.5" cy="7.5" r="1.2"/><circle cx="12" cy="7.5" r="1.2"/></svg></button>
+              </div>
 
-      <div class="card">
-        <div class="card-hd" onclick="togCard(this.parentElement)">
-          <span class="card-title">Condições comerciais</span>
-          <span class="chev"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l5 5 5-5"/></svg></span>
-        </div>
-        <div class="card-body">
-          <div class="row col2">
-            <div class="field"><label>Índice de correção</label><select><option>Selecione</option><option selected>IPCA</option><option>IGPM</option><option>SELIC</option></select></div>
-            <div class="field"><label>Correção a partir de</label><select><option>Selecione</option><option selected>Citação</option><option>Sentença</option></select></div>
-          </div>
-          <div class="row col3">
-            <div class="field"><label>Prazo liquidação (meses)</label><input type="number" value="5" min="0"/></div>
-            <div class="field"><label>Data estimada da liquidação</label><input class="calc" type="text" value="24/09/2026"/></div>
-            <div class="field"><label>Juros moratório</label><select><option>Selecione</option><option selected>2%</option></select></div>
-          </div>
-          <div class="row col2">
-            <div class="field"><label>Empresa</label><select><option>Selecione</option><option selected>JusCash</option></select></div>
-            <div class="field"><label>Data de arbitramento de honorários</label><input type="date" value="2026-09-24"/></div>
-          </div>
-        </div>
-      </div>
+              <div class="risco-row">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6.5 1L1 12h11L6.5 1z"/><line x1="6.5" y1="5" x2="6.5" y2="8"/><circle cx="6.5" cy="10" r=".5" fill="currentColor"/></svg>
+                <span>Risco jurídico</span>
+                <span style="margin-left:auto;font-weight:600;font-size:12px;color:#262626">2</span>
+              </div>
 
-      <div class="card">
-        <div class="card-hd" onclick="togCard(this.parentElement)">
-          <span class="card-title">Créditos e valores</span>
-          <span class="chev"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l5 5 5-5"/></svg></span>
-        </div>
-        <div class="card-body">
-          <div class="row col3" style="margin-bottom:16px">
-            <div class="field"><label>Deságio alvo (%)</label><input type="text" inputmode="decimal" id="g-desagio" value="20" placeholder="0%" oninput="maskPct(this);recalcAll()" onblur="blurPct(this);recalcAll()"/></div>
-            <div class="field"><label>Incremento registro (%)</label><input type="text" inputmode="decimal" id="g-inc-reg" value="2" placeholder="0%" oninput="maskPct(this);recalcAll()" onblur="blurPct(this);recalcAll()"/></div>
-            <div class="field"><label>Incremento risco (%)</label><input type="text" inputmode="decimal" id="g-inc-risk" value="2" placeholder="0%" oninput="maskPct(this);recalcAll()" onblur="blurPct(this);recalcAll()"/></div>
-          </div>
-          <div id="credits-list"></div>
-          <button class="add-btn" onclick="addCredit()">+ Adicionar crédito</button>
-          <div class="calc-final">
-            <div class="calc-final-title">Cálculo final consolidado</div>
-            <div class="calc-grid">
-              <div class="ci"><label>Valor do contrato</label><span id="cf-contrato">R$ 0,00</span></div>
-              <div class="ci"><label>Deságio médio</label><span id="cf-desagio">0,00%</span></div>
-              <div class="ci"><label>Desconto total de IR</label><span id="cf-ir">R$ 0,00</span></div>
-              <div class="ci"><label>Valor do depósito</label><span id="cf-deposito">R$ 0,00</span></div>
-              <div class="calc-divider"></div>
-              <div class="ci"><label>Abatimento total</label><span id="cf-abatimento">R$ 0,00</span></div>
-              <div class="ci"><label>Valor depósito final</label><span id="cf-depfinal">R$ 0,00</span></div>
-              <div class="ci"><label>Eficiência média</label><span id="cf-eficiencia">—</span></div>
-              <div class="ci"><label>Receita JusCash</label><span id="cf-receita">R$ 0,00</span></div>
-              <div class="calc-divider"></div>
-              <div class="ci"><label>Receita registro</label><span id="cf-reg" class="muted">Pendente definição</span></div>
+              <div class="divider"></div>
+              <span class="sec-lbl">IDs do processo</span>
+
+              <div class="icon-row">
+                <span class="icon-wrap"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="11" height="11" rx="1.5"/><path d="M4 6.5h5M6.5 4v5"/></svg></span>
+                <div><span class="lbl">ID SIJ</span><span class="val">918191</span></div>
+              </div>
+              <div class="icon-row">
+                <span class="icon-wrap"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 2.5H2.5A1.5 1.5 0 001 4v7a1.5 1.5 0 001.5 1.5H10A1.5 1.5 0 0011.5 11V8.5"/><path d="M8 1H12V5"/><path d="M12 1L5.5 7.5"/></svg></span>
+                <div><span class="lbl">ID CRM</span><span class="val">918191</span></div>
+              </div>
+              <div class="icon-row">
+                <span class="icon-wrap"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 2.5H2.5A1.5 1.5 0 001 4v7a1.5 1.5 0 001.5 1.5H10A1.5 1.5 0 0011.5 11V8.5"/><path d="M8 1H12V5"/><path d="M12 1L5.5 7.5"/></svg></span>
+                <div><span class="lbl">ID iiLex</span><span class="val-link">2222</span></div>
+              </div>
+              <div class="icon-row" style="margin-bottom:0">
+                <span class="icon-wrap"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 2.5H2.5A1.5 1.5 0 001 4v7a1.5 1.5 0 001.5 1.5H10A1.5 1.5 0 0011.5 11V8.5"/><path d="M8 1H12V5"/><path d="M12 1L5.5 7.5"/></svg></span>
+                <div><span class="lbl">ID Loy</span><span class="val-link">2222</span></div>
+              </div>
+
+              <div class="divider"></div>
+              <span class="sec-lbl">Processo vinculado</span>
+              <div class="vinc-row"><span class="val-link" style="font-size:11px">0000000-00.0000.0.00.0000</span><span class="vinc-tag">Renegociação</span></div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="card">
-        <div class="card-hd" onclick="togCard(this.parentElement)">
-          <span class="card-title">Exceções</span>
-          <span class="chev"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l5 5 5-5"/></svg></span>
-        </div>
-        <div class="card-body">
-          <div class="exc-grid">
-            <label class="chk-row"><input type="checkbox" id="chkParc" onchange="toggleParc()"/> Parceria</label>
-            <div></div>
-          </div>
-          </div>
-
-          <div id="parc-block" style="display:none" class="expand-warn">
-            <div class="expand-warn-title">Regra de parceria</div>
-            <div class="row col3">
-              <div class="field"><label>Tipo de parceria</label><select><option>Selecione</option><option>Indicação</option><option>Condenação</option><option>Influenciador</option></select></div>
-              <div class="field"><label>Cliente parceiro</label><input type="text" placeholder="Selecione ou digite"/></div>
-              <div class="field"><label>Comissão (%)</label><input type="text" inputmode="decimal" id="parc-pct" value="2" placeholder="0%" oninput="maskPct(this);recalcParc()" onblur="blurPct(this);recalcParc()"/></div>
+        <!-- col direita -->
+        <div>
+          <!-- informações do processo -->
+          <div class="card">
+            <div class="card-hd" onclick="togCard(this)">
+              <span class="card-title">Informações do processo</span>
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="#A3A3A3" stroke-width="1.5"><path d="M2 4.5l4.5 4.5 4.5-4.5"/></svg>
             </div>
-            <div class="field" style="margin-bottom:12px">
-              <label>Créditos vinculados <span style="font-weight:400;color:#aaa">(a comissão incide sobre o depósito final dos créditos selecionados)</span></label>
-              <div class="ms-wrap" id="parc-ms-wrap">
-                <div class="ms-trigger" id="parc-ms-trigger" onclick="toggleParcMs()">
-                  <span class="placeholder" id="parc-ms-ph">Todos os créditos</span>
-                </div>
-                <svg class="ms-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l4 4 4-4"/></svg>
-                <div class="ms-dropdown" id="parc-ms-dd"></div>
+            <div class="card-body">
+              <div class="grid3">
+                <div class="frow"><span class="lbl">Nº cump. de sentença</span><span class="val">0000000-00.0000.0.00.0000</span></div>
+                <div class="frow"><span class="lbl">Nº RPV</span><span class="val">0000000-00.0000.0.00.0000</span></div>
+                <div class="frow"><span class="lbl">Esfera</span><span class="val">Federal</span></div>
+              </div>
+              <div class="frow"><span class="lbl">Unidade judiciária</span><span class="val">Juizado Especial Cível e Criminal Adjunto à 2ª Vara Federal da SSJ de Itabuna-BA</span></div>
+              <div class="grid3">
+                <div class="frow"><span class="lbl">Unid. jud. padronizada</span><span class="val">2ª Itabuna</span></div>
+                <div class="frow"><span class="lbl">UF</span><span class="val">SP</span></div>
+                <div class="frow"><span class="lbl">Tribunal</span><span class="val">TRF1</span></div>
+              </div>
+              <div class="grid3">
+                <div class="frow"><span class="lbl">Rito</span><span class="val">Sumário/Sumaríssimo</span></div>
+                <div class="frow"><span class="lbl">Grau de jurisdição</span><span class="val">1ª instância</span></div>
+                <div class="frow"><span class="lbl">Tipo do réu</span><span class="val">Privado — Concordância</span></div>
+              </div>
+              <div class="grid2">
+                <div class="frow"><span class="lbl">Fase processual</span><span class="val">7.2 Cálculo homologado, já com petição</span></div>
+                <div class="frow"><span class="lbl">Procuração pública</span><span class="val">Sim</span></div>
               </div>
             </div>
-            <div class="row col3">
-              <div class="field"><label>Valor da comissão</label><input class="calc" type="text" id="parc-valor" placeholder="R$ 0,00"/></div>
-              <div class="field"><label>Status</label><select><option>Pendente</option><option>Pago</option></select></div>
-              <div class="field"><label>Data do pagamento</label><input type="date"/></div>
+          </div>
+
+          <!-- créditos resumo -->
+          <div class="card">
+            <div class="card-hd" onclick="togCard(this)">
+              <span class="card-title">Créditos</span>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:11px;color:#A3A3A3">2 créditos</span>
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="#A3A3A3" stroke-width="1.5"><path d="M2 4.5l4.5 4.5 4.5-4.5"/></svg>
+              </div>
+            </div>
+            <div class="card-body" style="padding:8px 16px">
+              <div class="credito-row" onclick="goTab('comercial', document.querySelector('.tab:nth-child(2)'))">
+                <div class="credito-num">1</div>
+                <div class="credito-info">
+                  <div class="credito-cedente">Amélia Mascarenhas</div>
+                  <div class="credito-tipo">Honorários contratuais · ID #CR-001</div>
+                  <div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap">
+                    <span class="tag tag-modelo">Não aguarda homologação</span>
+                    <span class="tag tag-modelo">Deságio flexível</span>
+                  </div>
+                </div>
+                <div class="credito-vals">
+                  <span class="credito-dep">R$ 7.290,00</span>
+                  <span class="tag tag-wait-pay">Aguarda pagamento</span>
+                </div>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#A3A3A3" stroke-width="1.5"><path d="M4 2l4 4-4 4"/></svg>
+              </div>
+              <div class="credito-row" onclick="goTab('comercial', document.querySelector('.tab:nth-child(2)'))">
+                <div class="credito-num">2</div>
+                <div class="credito-info">
+                  <div class="credito-cedente">João Silva</div>
+                  <div class="credito-tipo">Condenação · ID #CR-002</div>
+                  <div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap">
+                    <span class="tag tag-modelo">Não aguarda homologação</span>
+                    <span class="tag tag-modelo">Modelo 50%</span>
+                  </div>
+                </div>
+                <div class="credito-vals">
+                  <span class="credito-dep">R$ 12.150,00</span>
+                  <span class="tag tag-wait-rec">Aguarda recebimento</span>
+                </div>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#A3A3A3" stroke-width="1.5"><path d="M4 2l4 4-4 4"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- registros -->
+          <div class="card">
+            <div class="card-hd" onclick="togCard(this)">
+              <span class="card-title">Registros</span>
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="#A3A3A3" stroke-width="1.5"><path d="M2 4.5l4.5 4.5 4.5-4.5"/></svg>
+            </div>
+            <div class="card-body">
+              <div class="reg-filters">
+                <button class="reg-btn on" onclick="setFilter(this)">Tudo</button>
+                <button class="reg-btn" onclick="setFilter(this)">Alterações</button>
+                <button class="reg-btn" onclick="setFilter(this)">Observações</button>
+              </div>
+              <div class="reg-input-wrap">
+                <div class="avatar">AM</div>
+                <textarea class="reg-textarea" placeholder="Digite sua observação aqui" rows="2"></textarea>
+                <button class="icon-btn" style="color:#008633"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 1L1 6l5 2 2 5z"/><path d="M6 8l4-4"/></svg></button>
+              </div>
+              <p class="hint">Use @ para mencionar alguém e # para vincular uma transação.</p>
+              <div class="search-wrap">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#A3A3A3" stroke-width="1.5" style="position:absolute;left:9px;top:50%;transform:translateY(-50%)"><circle cx="5" cy="5" r="4"/><path d="M9 9l2 2"/></svg>
+                <input class="search-input" placeholder="Pesquise por termo"/>
+              </div>
+              <div class="reg-card">
+                <div style="padding:10px 12px 6px">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <div class="avatar">AM</div>
+                    <div style="flex:1"><div style="font-size:12px;font-weight:600">Amélia Mascarenhas</div><div style="font-size:10px;color:#A3A3A3">40 minutos atrás</div></div>
+                    <button class="icon-btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="3" cy="7" r="1"/><circle cx="7" cy="7" r="1"/><circle cx="11" cy="7" r="1"/></svg></button>
+                  </div>
+                </div>
+                <div style="padding:0 12px 10px">
+                  <p style="font-size:12px;line-height:1.6">Lorem ipsum dolor sit amet, <span class="mention">@Maria Souza</span> consectetur adipiscing <span class="link-tag">#22298</span></p>
+                  <div class="reply-card">
+                    <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">
+                      <div class="avatar sm g">MS</div>
+                      <span style="font-size:11px;font-weight:600">Maria Souza</span>
+                      <span style="font-size:10px;color:#A3A3A3">40 min atrás</span>
+                    </div>
+                    <p style="font-size:11px;line-height:1.5">Lorem ipsum dolor sit amet, <span class="mention">@Amélia Mascarenhas</span> consectetur adipiscing.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="alt-card">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div class="avatar sm">AM</div>
+                  <span style="font-size:11px;color:#6D6D6E;flex:1;line-height:1.4"><b style="color:#262626">Amélia Mascarenhas</b> alterou o campo <b style="color:#262626">telefone</b> de (99) 09202-0292 para (99) 29289-2290</span>
+                  <span style="font-size:10px;color:#A3A3A3;flex-shrink:0">40 min atrás</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ COMERCIAL ══ -->
+    <div class="panel" id="panel-comercial">
+
+      <!-- condições gerais -->
+      <div class="card">
+        <div class="card-hd" onclick="togCard(this)">
+          <span class="card-title">Condições comerciais</span>
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="#A3A3A3" stroke-width="1.5"><path d="M2 4.5l4.5 4.5 4.5-4.5"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="grid3">
+            <div class="frow"><span class="lbl">Índice de correção</span><span class="val">IPCA</span></div>
+            <div class="frow"><span class="lbl">Correção a partir de</span><span class="val">Citação</span></div>
+            <div class="frow"><span class="lbl">Juros moratório</span><span class="val">2%</span></div>
+          </div>
+          <div class="grid3">
+            <div class="frow"><span class="lbl">Prazo liquidação</span><span class="val">5 meses</span></div>
+            <div class="frow"><span class="lbl">Data estimada da liquidação</span><span class="val">24/09/2026</span></div>
+            <div class="frow"><span class="lbl">Empresa</span><span class="val">JusCash</span></div>
+          </div>
+          <div class="grid2">
+            <div class="frow"><span class="lbl">Deságio alvo</span><span class="val">20%</span></div>
+            <div class="frow"><span class="lbl">Data de arbitramento de honorários</span><span class="val">24/09/2026</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- crédito 1 -->
+      <div class="credito-detail">
+        <div class="credito-detail-hd" onclick="togCard(this)">
+          <div class="credito-num">1</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;color:#262626">Amélia Mascarenhas — Honorários contratuais</div>
+            <div style="font-size:11px;color:#6D6D6E;margin-top:2px;display:flex;align-items:center;gap:8px">
+              <span>ID #CR-001</span>
+              <span style="color:#D4D4D4">·</span>
+              <span>ID Ploomes: #PL-8821</span>
+              <span style="color:#D4D4D4">·</span>
+              <span class="tag tag-wait-pay" style="font-size:10px">Aguarda pagamento</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:13px;font-weight:700;color:#0C447C">R$ 7.290,00</span>
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="#A3A3A3" stroke-width="1.5"><path d="M2 4.5l4.5 4.5 4.5-4.5"/></svg>
+          </div>
+        </div>
+        <div class="credito-detail-body">
+          <!-- modelo e fase -->
+          <div class="grid2" style="margin-bottom:10px">
+            <div class="frow">
+              <span class="lbl">Modelo de transação</span>
+              <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:3px">
+                <span class="tag tag-modelo">Não aguarda homologação</span>
+                <span class="tag tag-modelo">Deságio flexível</span>
+              </div>
+            </div>
+            <div class="frow"><span class="lbl">Fase processual</span><span class="val">7.2 Cálculo homologado, já com petição</span></div>
+          </div>
+          <!-- info crédito -->
+          <div class="grid3">
+            <div class="frow"><span class="lbl">Data base da venda</span><span class="val">13/04/2026</span></div>
+            <div class="frow"><span class="lbl">Tipo de ativo</span><span class="val">RPV</span></div>
+            <div class="frow"><span class="lbl">Exceções</span><span class="val">Contratuais acima de 30%</span></div>
+          </div>
+          <!-- cedente -->
+          <div class="divider"></div>
+          <span class="sec-lbl">Cedente</span>
+          <div class="grid3">
+            <div class="frow"><span class="lbl">Nome</span><span class="val-link">Amélia Mascarenhas</span></div>
+            <div class="frow"><span class="lbl">CPF</span><span class="val">000-000-000.00</span></div>
+            <div class="frow"><span class="lbl">OAB</span><span class="val">00000SP</span></div>
+          </div>
+          <div class="grid2">
+            <div class="frow"><span class="lbl">Telefone</span><span class="val">(11) 33393-3939</span></div>
+            <div class="frow"><span class="lbl">E-mail</span><span class="val-link">email@email.com</span></div>
+          </div>
+          <!-- valores -->
+          <div class="divider"></div>
+          <span class="sec-lbl">Valores</span>
+          <div class="grid3">
+            <div class="frow"><span class="lbl">Valor bruto</span><span class="val">R$ 9.000,00</span></div>
+            <div class="frow"><span class="lbl">Valor IR</span><span class="val">R$ 900,00</span></div>
+            <div class="frow"><span class="lbl">Valor deduzido IR</span><span class="val">R$ 8.100,00</span></div>
+          </div>
+          <div class="grid3">
+            <div class="frow"><span class="lbl">Deságio</span><span class="val">20%</span></div>
+            <div class="frow"><span class="lbl">Valor depósito</span><span class="val">R$ 6.480,00</span></div>
+            <div class="frow"><span class="lbl">Abatimento</span><span class="val">R$ 0,00</span></div>
+          </div>
+          <!-- deságio flexível -->
+          <div class="df-block">
+            <div class="df-title">Deságio flexível</div>
+            <div class="grid3">
+              <div class="frow"><span class="lbl">Deságio flexível</span><span class="val">25%</span></div>
+              <div class="frow"><span class="lbl">Prazo liquidação</span><span class="val">3 meses</span></div>
+              <div class="frow"><span class="lbl">Data limite</span><span class="val">13/07/2026</span></div>
+            </div>
+            <div class="grid3">
+              <div class="frow"><span class="lbl">Depósito com deságio flex</span><span class="val">R$ 5.467,50</span></div>
+              <div class="frow"><span class="lbl">Receita JusCash flex</span><span class="val">R$ 1.012,50</span></div>
+              <div class="frow"><span class="lbl">Valor a devolver</span><span class="val" style="color:#0C447C;font-weight:700">R$ 1.012,50</span></div>
+            </div>
+            <div class="frow" style="margin-bottom:0"><span class="lbl">Status</span><span class="tag tag-wait-pay" style="margin-top:3px;display:inline-flex">No prazo</span></div>
+          </div>
+          <!-- calc -->
+          <div class="calc-block">
+            <div class="calc-title">Cálculo do crédito</div>
+            <div class="calc-grid">
+              <div class="ci"><label>Valor bruto</label><span>R$ 9.000,00</span></div>
+              <div class="ci"><label>IR</label><span>R$ 900,00</span></div>
+              <div class="ci"><label>Deduzido IR</label><span>R$ 8.100,00</span></div>
+              <div class="ci"><label>Deságio 20%</label><span>R$ 1.620,00</span></div>
+              <div class="calc-divider"></div>
+              <div class="ci"><label>Abatimento</label><span>R$ 0,00</span></div>
+              <div class="ci"><label>Depósito total</label><span class="hl">R$ 6.480,00</span></div>
+              <div class="ci"><label>Receita JusCash</label><span>R$ 2.520,00</span></div>
+              <div></div>
             </div>
           </div>
         </div>
       </div>
 
-    </div>
+      <!-- crédito 2 -->
+      <div class="credito-detail" style="margin-top:12px">
+        <div class="credito-detail-hd" onclick="togCard(this)">
+          <div class="credito-num">2</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;color:#262626">João Silva — Condenação</div>
+            <div style="font-size:11px;color:#6D6D6E;margin-top:2px;display:flex;align-items:center;gap:8px">
+              <span>ID #CR-002</span>
+              <span style="color:#D4D4D4">·</span>
+              <span>ID Ploomes: #PL-8822</span>
+              <span style="color:#D4D4D4">·</span>
+              <span class="tag tag-wait-rec" style="font-size:10px">Aguarda recebimento</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:13px;font-weight:700;color:#0C447C">R$ 12.150,00</span>
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="#A3A3A3" stroke-width="1.5"><path d="M2 4.5l4.5 4.5 4.5-4.5"/></svg>
+          </div>
+        </div>
+        <div class="credito-detail-body">
+          <div class="grid2" style="margin-bottom:10px">
+            <div class="frow">
+              <span class="lbl">Modelo de transação</span>
+              <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:3px">
+                <span class="tag tag-modelo">Não aguarda homologação</span>
+                <span class="tag tag-modelo">Modelo 50%</span>
+              </div>
+            </div>
+            <div class="frow"><span class="lbl">Fase processual</span><span class="val">8. Feito o mandado de expedição de RPV / Alvará</span></div>
+          </div>
+          <div class="grid3">
+            <div class="frow"><span class="lbl">Data base da venda</span><span class="val">20/01/2026</span></div>
+            <div class="frow"><span class="lbl">Tipo de ativo</span><span class="val">Precatório</span></div>
+            <div class="frow"><span class="lbl">Exceções</span><span class="val">—</span></div>
+          </div>
+          <div class="divider"></div>
+          <span class="sec-lbl">Cedente</span>
+          <div class="grid3">
+            <div class="frow"><span class="lbl">Nome</span><span class="val-link">João Silva</span></div>
+            <div class="frow"><span class="lbl">CPF</span><span class="val">111-111-111.11</span></div>
+            <div class="frow"><span class="lbl">OAB</span><span class="val">11111SP</span></div>
+          </div>
+          <div class="grid2">
+            <div class="frow"><span class="lbl">Telefone</span><span class="val">(11) 99999-9999</span></div>
+            <div class="frow"><span class="lbl">E-mail</span><span class="val-link">joao@email.com</span></div>
+          </div>
+          <div class="divider"></div>
+          <span class="sec-lbl">Valores</span>
+          <div class="grid3">
+            <div class="frow"><span class="lbl">Valor bruto</span><span class="val">R$ 15.000,00</span></div>
+            <div class="frow"><span class="lbl">Valor IR</span><span class="val">R$ 0,00</span></div>
+            <div class="frow"><span class="lbl">Valor deduzido IR</span><span class="val">R$ 15.000,00</span></div>
+          </div>
+          <div class="grid3">
+            <div class="frow"><span class="lbl">Deságio</span><span class="val">19%</span></div>
+            <div class="frow"><span class="lbl">Valor depósito</span><span class="val">R$ 12.150,00</span></div>
+            <div class="frow"><span class="lbl">Abatimento</span><span class="val">R$ 0,00</span></div>
+          </div>
+          <div class="calc-block">
+            <div class="calc-title">Cálculo do crédito</div>
+            <div class="calc-grid">
+              <div class="ci"><label>Valor bruto</label><span>R$ 15.000,00</span></div>
+              <div class="ci"><label>IR</label><span>R$ 0,00</span></div>
+              <div class="ci"><label>Deduzido IR</label><span>R$ 15.000,00</span></div>
+              <div class="ci"><label>Deságio 19%</label><span>R$ 2.850,00</span></div>
+              <div class="calc-divider"></div>
+              <div class="ci"><label>Abatimento</label><span>R$ 0,00</span></div>
+              <div class="ci"><label>Depósito total</label><span class="hl">R$ 12.150,00</span></div>
+              <div class="ci"><label>Receita JusCash</label><span>R$ 2.850,00</span></div>
+              <div></div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <!-- ══════════════ FINANCEIRO ══════════════ -->
-    <div id="tab-financeiro" class="tab-panel">
-
-      <div class="card">
-        <div class="card-hd" onclick="togCard(this.parentElement)">
-          <span class="card-title">Depósito e recebimento</span>
-          <span class="chev"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l5 5 5-5"/></svg></span>
+      <!-- cálculo consolidado -->
+      <div class="card" style="margin-top:12px">
+        <div class="card-hd" onclick="togCard(this)">
+          <span class="card-title">Cálculo final consolidado</span>
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="#A3A3A3" stroke-width="1.5"><path d="M2 4.5l4.5 4.5 4.5-4.5"/></svg>
         </div>
         <div class="card-body">
-          <div id="mov-list"></div>
-          <button class="add-btn" onclick="addMov()">+ Adicionar movimentação</button>
-          <div class="sum-bar">
-            <div class="sum-it"><label>Valor deduzido IR (referência)</label><span id="sv-ref">R$ 0,00</span></div>
-            <div class="sum-it"><label>Valor depósito total</label><span id="sv-deptotal">R$ 0,00</span></div>
-            <div class="sum-it"><label>Total depositado ao cliente</label><span id="sv-dep">R$ 0,00</span></div>
-            <div class="sum-it"><label>Total recebido da liquidação</label><span id="sv-rec">R$ 0,00</span></div>
-            <div class="sum-it"><label>Saldo a receber</label><span id="sv-saldo">R$ 0,00</span></div>
+          <div class="calc-grid" style="grid-template-columns:repeat(4,1fr)">
+            <div class="ci"><label>Valor do contrato</label><span>R$ 24.000,00</span></div>
+            <div class="ci"><label>Deságio médio</label><span>19,34%</span></div>
+            <div class="ci"><label>Desconto total de IR</label><span>R$ 900,00</span></div>
+            <div class="ci"><label>Valor do depósito</label><span>R$ 18.630,00</span></div>
+            <div class="calc-divider"></div>
+            <div class="ci"><label>Abatimento total</label><span>R$ 0,00</span></div>
+            <div class="ci"><label>Depósito final</label><span class="hl">R$ 18.630,00</span></div>
+            <div class="ci"><label>Eficiência média</label><span style="color:#3B6D11">96,7%</span></div>
+            <div class="ci"><label>Receita JusCash</label><span>R$ 5.370,00</span></div>
+            <div class="calc-divider"></div>
+            <div class="ci"><label>Receita registro</label><span style="color:#A3A3A3;font-style:italic;font-size:11px">Pendente definição</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- parceria -->
+      <div class="card" style="margin-top:12px">
+        <div class="card-hd" onclick="togCard(this)">
+          <span class="card-title">Parceria</span>
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="#A3A3A3" stroke-width="1.5"><path d="M2 4.5l4.5 4.5 4.5-4.5"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="grid3">
+            <div class="frow"><span class="lbl">Tipo de parceria</span><span class="val">Indicação</span></div>
+            <div class="frow"><span class="lbl">Cliente parceiro</span><span class="val-link">Carlos Mendes</span></div>
+            <div class="frow"><span class="lbl">Créditos vinculados</span><span class="val">Crédito 1</span></div>
+          </div>
+          <div class="grid3">
+            <div class="frow"><span class="lbl">Comissão</span><span class="val">2%</span></div>
+            <div class="frow"><span class="lbl">Valor da comissão</span><span class="val">R$ 129,60</span></div>
+            <div class="frow"><span class="lbl">Status</span><span class="tag tag-wait-pay" style="margin-top:3px;display:inline-flex">Pendente</span></div>
           </div>
         </div>
       </div>
 
     </div>
 
-  </div><!-- /main -->
-</div><!-- /shell -->
+    <!-- ══ OUTRAS ABAS ══ -->
+    <div class="panel" id="panel-financeiro">
+
+      <!-- barra resumo -->
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px">
+        <div style="background:#fff;border:.5px solid #D4D4D4;border-radius:10px;padding:12px 14px">
+          <span class="lbl">Valor deduzido IR (ref.)</span>
+          <span style="font-size:14px;font-weight:700;color:#262626;display:block;margin-top:4px">R$ 23.100,00</span>
+        </div>
+        <div style="background:#fff;border:.5px solid #D4D4D4;border-radius:10px;padding:12px 14px">
+          <span class="lbl">Depósito total previsto</span>
+          <span style="font-size:14px;font-weight:700;color:#262626;display:block;margin-top:4px">R$ 18.630,00</span>
+        </div>
+        <div style="background:#fff;border:.5px solid #D4D4D4;border-radius:10px;padding:12px 14px">
+          <span class="lbl">Total depositado</span>
+          <span style="font-size:14px;font-weight:700;color:#0C447C;display:block;margin-top:4px">R$ 6.480,00</span>
+        </div>
+        <div style="background:#fff;border:.5px solid #D4D4D4;border-radius:10px;padding:12px 14px">
+          <span class="lbl">Total recebido</span>
+          <span style="font-size:14px;font-weight:700;color:#3B6D11;display:block;margin-top:4px">R$ 12.150,00</span>
+        </div>
+        <div style="background:#fff;border:.5px solid #D4D4D4;border-radius:10px;padding:12px 14px">
+          <span class="lbl">Saldo a receber</span>
+          <span style="font-size:14px;font-weight:700;color:#A32D2D;display:block;margin-top:4px">R$ 10.950,00</span>
+        </div>
+      </div>
+
+      <!-- movimentações -->
+      <div class="card">
+        <div class="card-hd" onclick="togCard(this)">
+          <span class="card-title">Movimentações</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:11px;color:#A3A3A3">3 registros</span>
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="#A3A3A3" stroke-width="1.5"><path d="M2 4.5l4.5 4.5 4.5-4.5"/></svg>
+          </div>
+        </div>
+        <div class="card-body" style="padding:0">
+
+          <!-- depósito -->
+          <div style="padding:14px 16px;border-bottom:.5px solid #F0F0F0">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+              <span style="background:#EAF3DE;color:#27500A;font-size:10px;font-weight:700;padding:2px 10px;border-radius:9999px">Depósito</span>
+              <span style="font-size:11px;color:#A3A3A3">13/04/2026</span>
+              <span style="font-size:11px;color:#A3A3A3;margin-left:auto">Crédito 1 — Amélia Mascarenhas</span>
+            </div>
+            <div class="grid3">
+              <div class="frow"><span class="lbl">Valor depositado</span><span class="val">R$ 6.480,00</span></div>
+              <div class="frow"><span class="lbl">Origem funding</span><span class="val">Fundo A</span></div>
+              <div class="frow"><span class="lbl">Data do depósito</span><span class="val">13/04/2026</span></div>
+            </div>
+          </div>
+
+          <!-- recebimento -->
+          <div style="padding:14px 16px;border-bottom:.5px solid #F0F0F0">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+              <span style="background:#E6F1FB;color:#0C447C;font-size:10px;font-weight:700;padding:2px 10px;border-radius:9999px">Recebimento</span>
+              <span style="font-size:11px;color:#A3A3A3">20/01/2026</span>
+              <span style="font-size:11px;color:#A3A3A3;margin-left:auto">Crédito 2 — João Silva</span>
+            </div>
+            <div class="grid3">
+              <div class="frow"><span class="lbl">Valor recebido</span><span class="val">R$ 12.150,00</span></div>
+              <div class="frow"><span class="lbl">Data do recebimento</span><span class="val">20/01/2026</span></div>
+              <div class="frow"><span class="lbl">Recebimento parcial</span><span class="val">Não</span></div>
+            </div>
+            <!-- IR -->
+            <div style="background:#F5F5F5;border-radius:8px;padding:10px 12px;border:.5px solid #E5E5E5">
+              <div style="font-size:10px;font-weight:600;color:#A3A3A3;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Imposto de renda</div>
+              <div class="grid3">
+                <div class="frow"><span class="lbl">IR previsto</span><span class="val">R$ 0,00</span></div>
+                <div class="frow"><span class="lbl">IR realizado</span><span class="val">R$ 0,00</span></div>
+                <div class="frow"><span class="lbl">Status IR</span><span class="tag tag-done" style="margin-top:3px;display:inline-flex">Não devolver</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- devolução -->
+          <div style="padding:14px 16px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+              <span style="background:#FAEEDA;color:#633806;font-size:10px;font-weight:700;padding:2px 10px;border-radius:9999px">Devolução</span>
+              <span style="font-size:11px;color:#A3A3A3">Pendente</span>
+              <span style="background:#FCEBEB;color:#A32D2D;font-size:10px;font-weight:600;padding:2px 8px;border-radius:9999px;margin-left:auto">⚠ Deságio flexível — Crédito 1 aguarda devolução</span>
+            </div>
+            <div class="grid3">
+              <div class="frow"><span class="lbl">Tipo de devolução</span><span class="val">Deságio flexível</span></div>
+              <div class="frow"><span class="lbl">Valor a devolver</span><span class="val" style="color:#A32D2D;font-weight:700">R$ 1.012,50</span></div>
+              <div class="frow"><span class="lbl">Data da devolução</span><span class="val">—</span></div>
+            </div>
+            <div class="frow"><span class="lbl">Crédito vinculado</span><span class="val">Crédito 1 — Amélia Mascarenhas</span></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- consolidado realizado -->
+      <div class="card" style="margin-top:12px">
+        <div class="card-hd" onclick="togCard(this)">
+          <span class="card-title">Consolidado realizado</span>
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="#A3A3A3" stroke-width="1.5"><path d="M2 4.5l4.5 4.5 4.5-4.5"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="calc-grid" style="grid-template-columns:repeat(4,1fr)">
+            <div class="ci"><label>Total depositado</label><span>R$ 6.480,00</span></div>
+            <div class="ci"><label>Total recebido</label><span>R$ 12.150,00</span></div>
+            <div class="ci"><label>Total devolvido IR</label><span>R$ 0,00</span></div>
+            <div class="ci"><label>Total devolvido deságio flex</label><span>R$ 0,00</span></div>
+            <div class="calc-divider"></div>
+            <div class="ci"><label>Receita JusCash realizada</label><span class="hl">R$ 2.850,00</span></div>
+            <div class="ci"><label>Receita correção</label><span style="color:#A3A3A3;font-style:italic;font-size:11px">Pendente definição</span></div>
+            <div class="ci"><label>Deságio médio realizado</label><span>19%</span></div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="panel" id="panel-infos">
+      <div class="card"><div class="card-body" style="text-align:center;padding:40px;color:#A3A3A3;font-size:13px">Aba Informações adicionais — em construção</div></div>
+    </div>
+    <div class="panel" id="panel-anexos">
+      <div class="card"><div class="card-body" style="text-align:center;padding:40px;color:#A3A3A3;font-size:13px">Aba Anexos — em construção</div></div>
+    </div>
+
+  </div>
+</div>
+</div><!-- /mode-vis -->
+
+<!-- ══ MODO EDIÇÃO ══ -->
+<div id="mode-edit" style="display:none;flex-direction:column;flex:1">
+
+  <!-- subheader edição -->
+  <div style="background:#fff;border-bottom:1px solid #e8e8e3;flex-shrink:0">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 24px">
+      <div style="font-size:12px;color:#888;display:flex;align-items:center;gap:5px">
+        <span>Transações</span><span style="color:#ccc">›</span><span>Transação</span><span style="color:#ccc">›</span><strong style="color:#1a1a1a;font-weight:500">Editar transação</strong>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="e-btn" onclick="setMode('vis')">Cancelar e voltar</button>
+        <button class="e-btn e-btn-primary" onclick="setMode('vis')">Salvar</button>
+      </div>
+    </div>
+    <div style="display:flex;padding:0 24px;border-bottom:1px solid #e8e8e3;background:#fff">
+      <div class="e-tab active" id="etab-btn-processo" onclick="goEditTab('processo')">Informações do processo</div>
+      <div class="e-tab" id="etab-btn-comercial" onclick="goEditTab('comercial')">Comercial</div>
+      <div class="e-tab" id="etab-btn-financeiro" onclick="goEditTab('financeiro')">Financeiro</div>
+    </div>
+  </div>
+
+  <div style="flex:1;padding:20px 24px;overflow:auto">
+
+    <!-- processo -->
+    <div id="etab-processo" class="e-panel active">
+      <div class="e-card">
+        <div class="e-card-hd" onclick="togECard(this)"><span class="e-card-title">Informações do processo</span><span class="e-chev"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l5 5 5-5"/></svg></span></div>
+        <div class="e-card-body">
+          <div class="e-row e-col2"><div class="e-field"><label>Número do processo</label><input type="text" value="0600363-91.2024.8.04.5600"/></div><div class="e-field"><label>Número do cumprimento de sentença</label><input type="text" placeholder=""/></div></div>
+          <div class="e-row e-col3"><div class="e-field"><label>Número do RPV</label><input type="text"/></div><div class="e-field"><label>Esfera</label><select><option>Selecione</option><option>Federal</option><option>Cível</option></select></div><div class="e-field"><label>Grau de jurisdição</label><select><option>Selecione</option><option>1ª instância</option><option>2ª instância</option></select></div></div>
+          <div class="e-row e-col2"><div class="e-field"><label>Tribunal de tramitação</label><input type="text" value="TRF1"/></div><div class="e-field"><label>Unidade judiciária</label><input type="text" value="Juizado Especial Cível"/></div></div>
+          <div class="e-row e-col2"><div class="e-field"><label>Rito</label><select><option>Sumário/Sumaríssimo</option></select></div><div class="e-field"><label>Tipo do réu</label><select id="e-tipo-reu" onchange="eUpdateFase()"><option value="">Selecione</option><option value="publico">Público</option><option value="privado_concordancia">Privado — Concordância</option><option value="privado_discordancia">Privado — Discordância</option><option value="pericial_concordancia">Privado — Concordância (periciais)</option><option value="pericial_discordancia">Privado — Discordância (periciais)</option></select></div></div>
+          <div class="e-row e-col2"><div class="e-field"><label>Fase processual</label><select id="e-fase"><option>Selecione o tipo do réu primeiro</option></select></div><div class="e-field"><label>UF</label><select><option>SP</option><option>AM</option><option>RJ</option></select></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- comercial -->
+    <div id="etab-comercial" class="e-panel">
+      <div class="e-card">
+        <div class="e-card-hd" onclick="togECard(this)"><span class="e-card-title">Condições comerciais</span><span class="e-chev"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l5 5 5-5"/></svg></span></div>
+        <div class="e-card-body">
+          <div class="e-row e-col3"><div class="e-field"><label>Índice de correção</label><select><option>IPCA</option><option>IGPM</option></select></div><div class="e-field"><label>Correção a partir de</label><select><option>Citação</option><option>Sentença</option></select></div><div class="e-field"><label>Juros moratório</label><select><option>2%</option></select></div></div>
+          <div class="e-row e-col3"><div class="e-field"><label>Prazo liquidação (meses)</label><input type="number" value="5"/></div><div class="e-field"><label>Data estimada liquidação</label><input type="text" value="24/09/2026" class="e-calc"/></div><div class="e-field"><label>Empresa</label><select><option>JusCash</option></select></div></div>
+          <div class="e-row e-col3"><div class="e-field"><label>Deságio alvo (%)</label><input type="text" id="e-g-desagio" value="20" oninput="eRecalcAll()" onblur="eBlurPct(this);eRecalcAll()"/></div><div class="e-field"><label>Data arbitramento honorários</label><input type="date" value="2026-09-24"/></div><div></div></div>
+        </div>
+      </div>
+      <div class="e-card">
+        <div class="e-card-hd" onclick="togECard(this)"><span class="e-card-title">Créditos e valores</span><span class="e-chev"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l5 5 5-5"/></svg></span></div>
+        <div class="e-card-body">
+          <div id="e-credits-list"></div>
+          <button class="e-add-btn" onclick="eAddCredit()">+ Adicionar crédito</button>
+          <div class="e-calc-final">
+            <div class="e-calc-title">Cálculo final consolidado</div>
+            <div class="e-calc-grid">
+              <div class="e-ci"><label>Valor do contrato</label><span id="e-cf-contrato">R$ 0,00</span></div>
+              <div class="e-ci"><label>Deságio médio</label><span id="e-cf-desagio">0,00%</span></div>
+              <div class="e-ci"><label>Desconto total de IR</label><span id="e-cf-ir">R$ 0,00</span></div>
+              <div class="e-ci"><label>Valor do depósito</label><span id="e-cf-deposito">R$ 0,00</span></div>
+              <div class="e-calc-divider"></div>
+              <div class="e-ci"><label>Abatimento total</label><span id="e-cf-abatimento">R$ 0,00</span></div>
+              <div class="e-ci"><label>Depósito final</label><span id="e-cf-depfinal">R$ 0,00</span></div>
+              <div class="e-ci"><label>Eficiência média</label><span id="e-cf-eficiencia">—</span></div>
+              <div class="e-ci"><label>Receita JusCash</label><span id="e-cf-receita">R$ 0,00</span></div>
+              <div class="e-calc-divider"></div>
+              <div class="e-ci"><label>Receita registro</label><span style="color:#bbb;font-style:italic;font-size:12px">Pendente definição</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="e-card">
+        <div class="e-card-hd" onclick="togECard(this)"><span class="e-card-title">Parceria</span><span class="e-chev"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l5 5 5-5"/></svg></span></div>
+        <div class="e-card-body">
+          <label style="display:flex;align-items:center;gap:9px;font-size:13px;cursor:pointer;margin-bottom:8px"><input type="checkbox" id="e-chkParc" onchange="eToggleParc()"/> Parceria</label>
+          <div id="e-parc-block" style="display:none;border:1px solid #FAC775;background:#FAEEDA;border-radius:8px;padding:14px">
+            <div class="e-row e-col3"><div class="e-field"><label>Tipo</label><select><option>Indicação</option><option>Condenação</option></select></div><div class="e-field"><label>Cliente parceiro</label><input type="text" placeholder="Nome"/></div><div class="e-field"><label>Comissão (%)</label><input type="text" id="e-parc-pct" value="2" oninput="eRecalcParc()"/></div></div>
+            <div class="e-row e-col3"><div class="e-field"><label>Valor da comissão</label><input type="text" class="e-calc" id="e-parc-valor" placeholder="R$ 0,00"/></div><div class="e-field"><label>Status</label><select><option>Pendente</option><option>Pago</option></select></div><div class="e-field"><label>Data pagamento</label><input type="date"/></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- financeiro -->
+    <div id="etab-financeiro" class="e-panel">
+      <div class="e-card">
+        <div class="e-card-hd" onclick="togECard(this)"><span class="e-card-title">Depósito e recebimento</span><span class="e-chev"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l5 5 5-5"/></svg></span></div>
+        <div class="e-card-body">
+          <div id="e-mov-list"></div>
+          <button class="e-add-btn" onclick="eAddMov()">+ Adicionar movimentação</button>
+          <div class="e-sum-bar">
+            <div><label>Deduzido IR (ref.)</label><span id="e-sv-ref">R$ 0,00</span></div>
+            <div><label>Depósito total</label><span id="e-sv-deptotal">R$ 0,00</span></div>
+            <div><label>Total depositado</label><span id="e-sv-dep">R$ 0,00</span></div>
+            <div><label>Total recebido</label><span id="e-sv-rec">R$ 0,00</span></div>
+            <div><label>Saldo a receber</label><span id="e-sv-saldo">R$ 0,00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+/* edição styles com prefixo e- */
+.e-btn{height:32px;padding:0 16px;border-radius:6px;font-size:13px;cursor:pointer;border:1px solid #d5d5d0;background:#fff;color:#333;font-weight:500;font-family:inherit}
+.e-btn:hover{background:#f5f5f3}
+.e-btn-primary{background:#1558A0;color:#fff;border-color:#1558A0}
+.e-tab{padding:12px 20px;font-size:13px;color:#888;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.e-tab:hover{color:#333}
+.e-tab.active{color:#1558A0;border-bottom-color:#1558A0;font-weight:500}
+.e-panel{display:none}
+.e-panel.active{display:block}
+.e-card{background:#fff;border:1px solid #e8e8e3;border-radius:10px;margin-bottom:12px;overflow:hidden}
+.e-card-hd{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;cursor:pointer;user-select:none}
+.e-card-hd:hover{background:#fafaf8}
+.e-card-title{font-size:14px;font-weight:500;color:#1a1a1a}
+.e-chev{color:#aaa;transition:transform .18s;display:flex}
+.e-card.collapsed .e-chev{transform:rotate(-90deg)}
+.e-card-body{padding:20px;border-top:1px solid #f0f0ed}
+.e-card.collapsed .e-card-body{display:none}
+.e-row{display:grid;gap:12px;margin-bottom:12px}
+.e-row:last-child{margin-bottom:0}
+.e-col2{grid-template-columns:1fr 1fr}
+.e-col3{grid-template-columns:1fr 1fr 1fr}
+.e-col4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.e-field{display:flex;flex-direction:column;gap:5px}
+.e-field label{font-size:12px;color:#555;font-weight:500}
+.e-field input,.e-field select{height:36px;border:1px solid #d5d5d0;border-radius:6px;padding:0 12px;font-size:13px;background:#fff;color:#1a1a1a;width:100%}
+.e-field input:focus,.e-field select:focus{outline:none;border-color:#1558A0}
+.e-calc{background:#f7f7f5!important;color:#666!important;cursor:default}
+.e-hilite{background:#EBF4FD!important;border-color:#85B7EB!important;color:#0C447C!important;font-weight:600!important}
+.e-credit-item{border:1px solid #eaeae5;border-radius:8px;padding:14px;margin-bottom:8px;background:#fafaf8}
+.e-credit-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.e-credit-lbl{font-size:12px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.05em}
+.e-rm-btn{font-size:12px;color:#b03535;background:none;border:none;cursor:pointer;padding:3px 8px;border-radius:5px;font-family:inherit}
+.e-add-btn{width:100%;height:36px;display:flex;align-items:center;justify-content:center;gap:7px;border:1px dashed #c8c8c3;border-radius:6px;background:none;font-size:13px;color:#666;cursor:pointer;margin-top:10px;font-family:inherit}
+.e-add-btn:hover{border-color:#1558A0;color:#1558A0;background:#EBF4FD}
+.e-calc-final{background:#f5f5f3;border-radius:8px;padding:14px 16px;margin-top:14px;border:1px solid #e8e8e3}
+.e-calc-title{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+.e-calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.e-ci label{font-size:11px;color:#999;display:block;margin-bottom:3px}
+.e-ci span{font-size:14px;font-weight:600;color:#1a1a1a}
+.e-calc-divider{grid-column:1/-1;height:1px;background:#e8e8e3;margin:2px 0}
+.e-mov-item{border:1px solid #eaeae5;border-radius:8px;padding:14px;margin-bottom:8px}
+.e-mov-hd{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.e-tipo-sel{height:32px;border:1px solid #d5d5d0;border-radius:6px;padding:0 10px;font-size:12px;background:#fff;color:#1a1a1a;font-family:inherit}
+.e-sum-bar{display:flex;gap:24px;background:#f5f5f3;border-radius:8px;padding:12px 16px;margin-top:12px;flex-wrap:wrap;border:1px solid #e8e8e3}
+.e-sum-bar div label{font-size:11px;color:#999;display:block;margin-bottom:2px}
+.e-sum-bar div span{font-size:13px;font-weight:600;color:#1a1a1a}
+.e-df-block{border:1px solid #B5D4F4;background:#EBF4FD;border-radius:8px;padding:14px;margin-top:12px}
+.e-df-title{font-size:11px;font-weight:600;color:#0C447C;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+.e-section-sub{font-size:12px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #f0f0ed}
+.e-ms-wrap{position:relative}
+.e-ms-trigger{min-height:36px;border:1px solid #d5d5d0;border-radius:6px;padding:4px 32px 4px 10px;font-size:13px;background:#fff;width:100%;cursor:pointer;display:flex;flex-wrap:wrap;gap:4px;align-items:center;user-select:none}
+.e-ms-trigger.open{border-color:#1558A0}
+.e-ms-arrow{position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:#888}
+.e-ms-ph{color:#aaa;font-size:13px}
+.e-ms-tag{display:inline-flex;align-items:center;gap:5px;background:#E6F1FB;color:#0C447C;border-radius:4px;padding:2px 7px;font-size:12px;font-weight:500}
+.e-ms-dd{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid #d5d5d0;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.10);z-index:100;display:none}
+.e-ms-dd.open{display:block}
+.e-ms-opt{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;font-size:13px;color:#333}
+.e-ms-opt:hover{background:#f5f5f3}
+.e-ir-block{border-top:1px solid #eaeae5;margin-top:12px;padding-top:12px}
+.e-ir-title{font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.e-toggle-row{display:flex;align-items:center;gap:9px;font-size:13px;color:#555;padding:8px 0}
+.e-toggle{position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0}
+.e-toggle input{opacity:0;width:0;height:0}
+.e-tslider{position:absolute;inset:0;background:#ccc;border-radius:10px;cursor:pointer;transition:.15s}
+.e-tslider:before{content:"";position:absolute;width:16px;height:16px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.15s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+input:checked+.e-tslider{background:#1558A0}
+input:checked+.e-tslider:before{transform:translateX(16px)}
+</style>
 
 <script>
-// ── utils ──────────────────────────────────────────────────────
-// Lê valor real de um campo com máscara (ex: "R$ 1.200,50" → 1200.50)
-function num(v){
-  if(v==null)return 0;
-  var s=String(v).replace(/R\$\s*/g,'').replace(/\./g,'').replace(',','.');
-  return parseFloat(s.replace(/[^0-9.\-]/g,''))||0;
-}
-function brl(v){
-  var n=Number(v);
-  var abs=Math.abs(n);
-  var formatted='R$ '+abs.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-  return n<0?'− '+formatted:formatted;
-}
-function pf(v){
-  return Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';
-}
-function setT(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
-function setI(id,v){var e=document.getElementById(id);if(e)e.value=v;}
-
-// Máscara monetária: aplica no oninput de campos de valor
-// Mantém apenas dígitos, divide por 100, formata como BRL
-function maskMoney(el){
-  var raw=el.value.replace(/\D/g,'');
-  if(raw===''){el.value='';return;}
-  var n=parseInt(raw,10)/100;
-  el.value=brl(n);
-}
-// Máscara percentual: apenas números e até 2 decimais
-function maskPct(el){
-  var raw=el.value.replace(/[^0-9,\.]/g,'').replace(',','.');
-  // permite digitar livremente, formata ao sair
-  el.value=raw;
-}
-function blurPct(el){
-  var v=parseFloat(el.value.replace(',','.'))||0;
-  el.value=v%1===0?v.toFixed(0):v.toFixed(2);
+/* ── mode switcher ── */
+function setMode(m){
+  var vis=document.getElementById('mode-vis');
+  var edit=document.getElementById('mode-edit');
+  if(m==='edit'){vis.style.display='none';edit.style.display='flex';}
+  else{edit.style.display='none';vis.style.display='flex';}
 }
 
-// ── navegação ──────────────────────────────────────────────────
-function goTab(name){
-  ['processo','comercial','financeiro'].forEach(function(t){
-    document.getElementById('tab-'+t).classList.remove('active');
-    document.getElementById('tab-btn-'+t).classList.remove('active');
-  });
-  document.getElementById('tab-'+name).classList.add('active');
-  document.getElementById('tab-btn-'+name).classList.add('active');
+/* ── vis JS ── */
+function goTab(name,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('panel-'+name).classList.add('on');
+  if(btn)btn.classList.add('on');
 }
-function togCard(el){el.classList.toggle('collapsed');}
-function toggleParc(){document.getElementById('parc-block').style.display=document.getElementById('chkParc').checked?'block':'none';recalcParc();}
-
-// lista completa de tipos de crédito (sistema legado + novos, sem duplicatas)
-var TIPOS_CREDITO=[
-  'Honorários',
-  'Honorários + Condenação',
-  'Honorários Periciais',
-  'Condenação',
-  'Contratuais com destaque',
-  'Contratuais com destaque + Condenação',
-  'Contratuais com destaque + Sucumbenciais',
-  'Contratuais sem destaque',
-  'Contratuais sem destaque + Condenação',
-  'Contratuais sem destaque + Sucumbenciais',
-  'Dativos',
-  'Dativos + Sucumbenciais',
-  'Sucumbenciais',
-  'Sucumbenciais + Condenação',
-  'Totalidade de Créditos',
-  'Totalidade de Créditos - sem destaque'
-];
-
-function tipoOpts(){
-  return '<option value="">Selecione</option>'+TIPOS_CREDITO.map(function(t){return'<option>'+t+'</option>';}).join('');
+function togCard(hd){
+  var body=hd.nextElementSibling;
+  var svg=hd.querySelector('svg:last-child');
+  if(!body)return;
+  if(body.style.display==='none'){body.style.display='';if(svg)svg.style.transform='';}
+  else{body.style.display='none';if(svg)svg.style.transform='rotate(-90deg)';}
+}
+function setFilter(btn){
+  btn.closest('.reg-filters').querySelectorAll('.reg-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
 }
 
-// retorna array de ids de movimentações que vinculam este crédito
-function movimentacoesVinculadas(creditId){
-  return Object.keys(movSelections).filter(function(movId){
-    return movSelections[movId]&&movSelections[movId].has(creditId);
-  });
+/* ── edit JS ── */
+function goEditTab(name){
+  document.querySelectorAll('.e-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.e-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('etab-btn-'+name).classList.add('active');
+  document.getElementById('etab-'+name).classList.add('active');
 }
+function togECard(hd){hd.parentElement.classList.toggle('collapsed');}
+function eToggleParc(){document.getElementById('e-parc-block').style.display=document.getElementById('e-chkParc').checked?'block':'none';}
+function eBlurPct(el){var v=parseFloat(el.value.replace(',','.'))||0;el.value=v%1===0?v.toFixed(0):v.toFixed(2);}
 
-var cCount=0, credits={};
+/* utils */
+function eNum(v){if(v==null)return 0;var s=String(v).replace(/R\$\s*/g,'').replace(/\./g,'').replace(',','.');return parseFloat(s.replace(/[^0-9.\-]/g,''))||0;}
+function eBrl(v){var n=Number(v);var abs=Math.abs(n);var f='R$ '+abs.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});return n<0?'− '+f:f;}
+function ePct(v){return Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';}
+function eSetT(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+function eSetI(id,v){var e=document.getElementById(id);if(e)e.value=v;}
+function eMaskMoney(el){var raw=el.value.replace(/\D/g,'');if(raw===''){el.value='';return;}el.value=eBrl(parseInt(raw,10)/100);}
 
-function addCredit(){
-  cCount++;
-  var n=cCount, id='cr'+n;
-  credits[id]={bruto:0,ir:0,desagio:0,abatimento:0,deduzido:0,deposito:0,depTotal:0};
+var eCCount=0,eCredits={};
+
+function eAddCredit(){
+  eCCount++;
+  var n=eCCount,id='ecr'+n;
+  eCredits[id]={bruto:0,ir:0,desagio:0,abatimento:0,deduzido:0,deposito:0,depTotal:0};
   var d=document.createElement('div');
-  d.className='credit-item';d.id=id;
+  d.className='e-credit-item';d.id=id;
   d.innerHTML=
-    '<div class="credit-hd">'+
-      '<span class="credit-lbl">Crédito '+n+'</span>'+
-      '<button class="rm-btn" onclick="rmCredit(\''+id+'\')">Remover</button>'+
+    '<div class="e-credit-hd"><span class="e-credit-lbl">Crédito '+n+'</span><button class="e-rm-btn" onclick="eRmCredit(\''+id+'\')">Remover</button></div>'+
+    '<div class="e-row e-col2">'+
+      '<div class="e-field"><label>Cedente</label><select><option value="">Selecione</option><option>Amélia Mascarenhas</option><option>João Silva</option><option>Maria Oliveira</option></select></div>'+
+      '<div class="e-field"><label>Tipo de crédito</label><select><option value="">Selecione</option><option>Honorários</option><option>Condenação</option><option>Honorários + Condenação</option><option>Sucumbenciais</option><option>Contratuais com destaque</option><option>Contratuais sem destaque</option><option>Dativos</option></select></div>'+
     '</div>'+
-    '<div id="'+id+'-error" style="display:none;background:#FFF0F0;border:1px solid #F09595;border-radius:6px;padding:8px 12px;font-size:12px;color:#A32D2D;margin-bottom:10px"></div>'+
-    '<div class="row col2">'+
-      '<div class="field"><label>Cedente</label><select><option value="">Selecione</option><option>Amélia Mascarenhas</option><option>João Silva</option><option>Maria Oliveira</option></select></div>'+
-      '<div class="field"><label>Tipo de crédito</label><select onchange="updateFaseProcessual()">'+tipoOpts()+'</select></div>'+
+    '<div class="e-row e-col2">'+
+      '<div class="e-field"><label>Modelo de transação</label>'+
+        '<div class="e-ms-wrap"><div class="e-ms-trigger" onclick="eToggleMs(\''+id+'-mod\')"><span class="e-ms-ph" id="'+id+'-mod-ph">Selecione</span></div>'+
+        '<svg class="e-ms-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l4 4 4-4"/></svg>'+
+        '<div class="e-ms-dd" id="'+id+'-mod-dd">'+
+          ['Não aguarda homologação','Aguarda homologação','Aguarda habilitação','Simples (normal total)','Modelo 50%','Deságio flexível'].map(function(m,i){
+            var val=['nao_aguarda','aguarda_hom','aguarda_hab','simples','modelo50','desagio_flex'][i];
+            return '<div class="e-ms-opt" onclick="eToggleModOpt(\''+id+'\',\''+val+'\',\''+m+'\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> '+m+'</div>';
+          }).join('')+
+        '</div></div>'+
+      '</div>'+
+      '<div class="e-field"><label>Fase processual</label><select><option>Selecione</option><option>7.2 Cálculo homologado, já com petição</option></select></div>'+
     '</div>'+
-    '<div class="row col2">'+
-      '<div class="field">'+
-        '<label>Modelo de transação</label>'+
-        '<div class="ms-wrap" id="'+id+'-mod-wrap">'+
-          '<div class="ms-trigger" id="'+id+'-mod-trigger" onclick="toggleModMs(\''+id+'\')">'+
-            '<span class="placeholder" id="'+id+'-mod-ph">Selecione</span>'+
-          '</div>'+
-          '<svg class="ms-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l4 4 4-4"/></svg>'+
-          '<div class="ms-dropdown" id="'+id+'-mod-dd">'+
-            '<div class="ms-opt" onclick="toggleModOpt(\''+id+'\',\'nao_aguarda\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Não aguarda homologação</span></div>'+
-            '<div class="ms-opt" onclick="toggleModOpt(\''+id+'\',\'aguarda_homologacao\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Aguarda homologação</span></div>'+
-            '<div class="ms-opt" onclick="toggleModOpt(\''+id+'\',\'aguarda_habilitacao\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Aguarda habilitação</span></div>'+
-            '<div class="ms-opt" onclick="toggleModOpt(\''+id+'\',\'simples\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Simples (normal total)</span></div>'+
-            '<div class="ms-opt" onclick="toggleModOpt(\''+id+'\',\'modelo50\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Modelo 50%</span></div>'+
-            '<div class="ms-opt" id="'+id+'-mod-opt-df" onclick="toggleModOpt(\''+id+'\',\'desagio_flex\',this)"><input type="checkbox" id="'+id+'-chk-df" onclick="event.stopPropagation()"/> <span>Deságio flexível</span></div>'+
-          '</div>'+
-        '</div>'+
+    '<div id="'+id+'-df-wrap" style="display:none" class="e-df-block">'+
+      '<div class="e-df-title">Deságio flexível</div>'+
+      '<div class="e-row e-col4">'+
+        '<div class="e-field"><label>Deságio flex (%)</label><input type="text" id="'+id+'-df-pct" placeholder="0%" oninput="eMaskMoney(this);eRcCredit(\''+id+'\')" onblur="eBlurPct(this);eRcCredit(\''+id+'\')"/></div>'+
+        '<div class="e-field"><label>Dep. final flex</label><input class="e-calc" type="text" id="'+id+'-df-dep" readonly placeholder="R$ 0,00"/></div>'+
+        '<div class="e-field"><label>Receita JusCash flex</label><input class="e-calc" type="text" id="'+id+'-df-rec" readonly placeholder="R$ 0,00"/></div>'+
+        '<div class="e-field"><label>Valor a devolver</label><input class="e-hilite" type="text" id="'+id+'-df-dev" readonly placeholder="R$ 0,00"/></div>'+
       '</div>'+
     '</div>'+
-    '<div id="'+id+'-df-wrap" style="display:none" class="expand-info" >'+
-      '<div class="expand-info-title">Regra deságio flexível</div>'+
-      '<div class="row col2">'+
-        '<div class="field"><label>Prazo liquidação (meses)</label><input type="number" value="3" min="0"/></div>'+
-        '<div class="field"><label>Data limite da liquidação</label><input class="calc" type="text" placeholder="Calculada automaticamente"/></div>'+
-      '</div>'+
-      '<div class="row col4">'+
-        '<div class="field"><label>Deságio flexível (%)</label><input type="text" inputmode="decimal" id="'+id+'-df-pct" placeholder="0%" oninput="maskPct(this);rcCredit(\''+id+'\')" onblur="blurPct(this);rcCredit(\''+id+'\')"/></div>'+
-        '<div class="field"><label>Depósito final com deságio flexível</label><input class="calc" type="text" id="'+id+'-df-dep" placeholder="R$ 0,00"/></div>'+
-        '<div class="field"><label>Receita JusCash com deságio flexível</label><input class="calc" type="text" id="'+id+'-df-rec" placeholder="R$ 0,00"/></div>'+
-        '<div class="field"><label>Valor a devolver ao cliente</label><input class="calc hilite" type="text" id="'+id+'-df-dev" placeholder="R$ 0,00" readonly/></div>'+
-      '</div>'+
-      '<div class="row col2">'+
-        '<div class="field"><label>Status</label><select><option>Selecione</option><option>No prazo</option><option>Devolver</option><option>Devolvido</option><option>Vencido</option></select></div>'+
-        '<div></div>'+
-      '</div>'+
+    '<div class="e-row e-col4">'+
+      '<div class="e-field"><label>Valor bruto (R$)</label><input type="text" id="'+id+'-bruto" placeholder="R$ 0,00" oninput="eMaskMoney(this);eRcCredit(\''+id+'\')" onblur="eRcCredit(\''+id+'\')"/></div>'+
+      '<div class="e-field"><label>Valor IR (R$)</label><input type="text" id="'+id+'-ir" placeholder="R$ 0,00" oninput="eMaskMoney(this);eRcCredit(\''+id+'\')" onblur="eRcCredit(\''+id+'\')"/></div>'+
+      '<div class="e-field"><label>Valor deduzido IR</label><input class="e-calc" type="text" id="'+id+'-ded" readonly placeholder="R$ 0,00"/></div>'+
+      '<div class="e-field"><label>Deságio (%)</label><input type="text" id="'+id+'-des" placeholder="0%" oninput="eRcCredit(\''+id+'\')" onblur="eBlurPct(this);eRcCredit(\''+id+'\')"/></div>'+
     '</div>'+
-    '<div class="row col4">'+
-      '<div class="field"><label>Valor bruto (R$)</label><input type="text" inputmode="numeric" id="'+id+'-bruto" placeholder="R$ 0,00" oninput="maskMoney(this);rcCredit(\''+id+'\')" onblur="rcCredit(\''+id+'\')"/></div>'+
-      '<div class="field"><label>Valor IR (R$)</label><input type="text" inputmode="numeric" id="'+id+'-ir" placeholder="R$ 0,00" oninput="maskMoney(this);rcCredit(\''+id+'\')" onblur="rcCredit(\''+id+'\')"/></div>'+
-      '<div class="field"><label>Valor deduzido IR (R$)</label><input class="calc" type="text" id="'+id+'-ded" readonly placeholder="R$ 0,00"/></div>'+
-      '<div class="field"><label>Deságio (%)</label><input type="text" inputmode="decimal" id="'+id+'-des" placeholder="0%" oninput="maskPct(this);rcCredit(\''+id+'\')" onblur="blurPct(this);rcCredit(\''+id+'\')"/></div>'+
-    '</div>'+
-    '<div class="row col4">'+
-      '<div class="field"><label>Valor depósito (R$)</label><input class="calc" type="text" id="'+id+'-dep" readonly placeholder="R$ 0,00"/></div>'+
-      '<div class="field"><label>Abatimento (R$)</label><input type="text" inputmode="numeric" id="'+id+'-abat" placeholder="R$ 0,00" oninput="maskMoney(this);rcCredit(\''+id+'\')" onblur="rcCredit(\''+id+'\')"/></div>'+
-      '<div class="field"><label>Valor depósito total (R$)</label><input class="calc hilite" type="text" id="'+id+'-total" readonly placeholder="R$ 0,00"/></div>'+
+    '<div class="e-row e-col4">'+
+      '<div class="e-field"><label>Depósito (R$)</label><input class="e-calc" type="text" id="'+id+'-dep" readonly placeholder="R$ 0,00"/></div>'+
+      '<div class="e-field"><label>Abatimento (R$)</label><input type="text" id="'+id+'-abat" placeholder="R$ 0,00" oninput="eMaskMoney(this);eRcCredit(\''+id+'\')" onblur="eRcCredit(\''+id+'\')"/></div>'+
+      '<div class="e-field"><label>Depósito total</label><input class="e-hilite" type="text" id="'+id+'-total" readonly placeholder="R$ 0,00"/></div>'+
       '<div></div>'+
     '</div>'+
-    '<div class="section-sub" style="margin-top:14px;margin-bottom:10px">Informações do crédito</div>'+
-    '<div class="row col3">'+
-      '<div class="field"><label>Data base da venda</label><input type="date"/></div>'+
-      '<div class="field"><label>Status</label>'+
-        '<select>'+
-          '<option value="">Selecione</option>'+
-          '<option>Em aberto</option>'+
-          '<option>Aguarda pagamento</option>'+
-          '<option>Aguarda recebimento</option>'+
-          '<option>Concluído</option>'+
-          '<option>Perdido</option>'+
-          '<option>Cancelado</option>'+
-        '</select>'+
-      '</div>'+
-      '<div class="field"><label>Tipo de ativo</label>'+
-        '<select>'+
-          '<option value="">Selecione</option>'+
-          '<option>RPV</option>'+
-          '<option>Precatório</option>'+
-        '</select>'+
-      '</div>'+
-    '</div>'+
-    '<div class="row col2">'+
-      '<div class="field">'+
-        '<label>Exceções</label>'+
-        '<div class="ms-wrap" id="'+id+'-exc-wrap">'+
-          '<div class="ms-trigger" id="'+id+'-exc-trigger" onclick="toggleExcMs(\''+id+'\')">'+
-            '<span class="placeholder" id="'+id+'-exc-ph">Nenhuma exceção</span>'+
-          '</div>'+
-          '<svg class="ms-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l4 4 4-4"/></svg>'+
-          '<div class="ms-dropdown" id="'+id+'-exc-dd">'+
-            '<div class="ms-opt" onclick="toggleExcOpt(\''+id+'\',\'contra30\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Contratuais acima de 30%</span></div>'+
-            '<div class="ms-opt" onclick="toggleExcOpt(\''+id+'\',\'sem_destaque\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Contratuais sem destaque</span></div>'+
-            '<div class="ms-opt" onclick="toggleExcOpt(\''+id+'\',\'dev_solidario\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Devedor solidário</span></div>'+
-            '<div class="ms-opt" onclick="toggleExcOpt(\''+id+'\',\'fase_avancada\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Fase avançada sem incremento</span></div>'+
-            '<div class="ms-opt" onclick="toggleExcOpt(\''+id+'\',\'fora_politica\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Réu fora da política padrão</span></div>'+
-            '<div class="ms-opt" onclick="toggleExcOpt(\''+id+'\',\'reu_revel\',this)"><input type="checkbox" onclick="event.stopPropagation()"/> <span>Réu revel</span></div>'+
-          '</div>'+
-        '</div>'+
-      '</div>'+
-      '<div></div>'+
+    '<div class="e-section-sub" style="margin-top:14px">Informações do crédito</div>'+
+    '<div class="e-row e-col3">'+
+      '<div class="e-field"><label>Data base da venda</label><input type="date"/></div>'+
+      '<div class="e-field"><label>Status</label><select><option>Em aberto</option><option>Aguarda pagamento</option><option>Aguarda recebimento</option><option>Concluído</option><option>Perdido</option><option>Cancelado</option></select></div>'+
+      '<div class="e-field"><label>Tipo de ativo</label><select><option value="">Selecione</option><option>RPV</option><option>Precatório</option></select></div>'+
     '</div>';
-  document.getElementById('credits-list').appendChild(d);
+  document.getElementById('e-credits-list').appendChild(d);
 }
 
-function toggleModeloCredit(id){
-  var chkDf=document.getElementById(id+'-chk-df');
-  var wrap=document.getElementById(id+'-df-wrap');
-  if(!chkDf||!wrap)return;
-  wrap.style.display=chkDf.checked?'block':'none';
+var eModSels={};
+function eToggleMs(ddId){
+  var dd=document.getElementById(ddId+'-dd');
+  var tr=ddId.replace('-dd','');
+  if(!dd)return;
+  dd.classList.toggle('open');
 }
-
-function toggleExcMs(creditId){
-  var dd=document.getElementById(creditId+'-exc-dd');
-  var trigger=document.getElementById(creditId+'-exc-trigger');
-  if(!dd||!trigger)return;
-  var isOpen=dd.classList.contains('open');
-  if(isOpen){dd.classList.remove('open');trigger.classList.remove('open');}
-  else{dd.classList.add('open');trigger.classList.add('open');}
-}
-
-var excSelections={};
-function toggleExcOpt(creditId,val,optEl){
-  var key=creditId+'-exc';
-  if(!excSelections[key])excSelections[key]=new Set();
-  var sel=excSelections[key];
-  var chk=optEl.querySelector('input[type=checkbox]');
-  var labels={contra30:'Contratuais acima de 30%',sem_destaque:'Contratuais sem destaque',dev_solidario:'Devedor solidário',fase_avancada:'Fase avançada sem incremento',fora_politica:'Réu fora da política padrão',reu_revel:'Réu revel'};
+function eToggleModOpt(creditId,val,label,optEl){
+  var key=creditId+'-mod';
+  if(!eModSels[key])eModSels[key]=new Set();
+  var sel=eModSels[key];
+  var chk=optEl.querySelector('input');
   if(sel.has(val)){sel.delete(val);if(chk)chk.checked=false;optEl.style.background='';}
   else{sel.add(val);if(chk)chk.checked=true;optEl.style.background='#EBF4FD';}
-  var trigger=document.getElementById(creditId+'-exc-trigger');
-  var ph=document.getElementById(creditId+'-exc-ph');
-  if(!trigger)return;
-  trigger.querySelectorAll('.ms-tag').forEach(function(t){t.remove();});
-  if(sel.size===0){if(ph){ph.style.display='';ph.textContent='Nenhuma exceção';}}
-  else{
-    if(ph)ph.style.display='none';
-    sel.forEach(function(v){
-      var tag=document.createElement('span');
-      tag.className='ms-tag';tag.textContent=labels[v]||v;
-      trigger.insertBefore(tag,ph);
-    });
-  }
-}
-
-function toggleModMs(creditId){
-  var dd=document.getElementById(creditId+'-mod-dd');
-  var trigger=document.getElementById(creditId+'-mod-trigger');
-  if(!dd||!trigger)return;
-  var isOpen=dd.classList.contains('open');
-  if(isOpen){
-    dd.classList.remove('open');
-    trigger.classList.remove('open');
-  } else {
-    dd.classList.add('open');
-    trigger.classList.add('open');
-  }
-}
-
-// seleções de modelo de transação por crédito
-var modSelections={};
-
-function toggleModOpt(creditId,val,optEl){
-  var key=creditId+'-mod';
-  if(!modSelections[key])modSelections[key]=new Set();
-  var sel=modSelections[key];
-  var chk=optEl.querySelector('input[type=checkbox]');
-  if(sel.has(val)){
-    sel.delete(val);
-    if(chk)chk.checked=false;
-    optEl.style.background='';
-  } else {
-    sel.add(val);
-    if(chk)chk.checked=true;
-    optEl.style.background='#EBF4FD';
-  }
-  // atualiza tags no trigger
-  var trigger=document.getElementById(creditId+'-mod-trigger');
   var ph=document.getElementById(creditId+'-mod-ph');
-  if(!trigger)return;
-  trigger.querySelectorAll('.ms-tag').forEach(function(t){t.remove();});
-  var labels={
-    nao_aguarda:'Não aguarda homologação',
-    aguarda_homologacao:'Aguarda homologação',
-    aguarda_habilitacao:'Aguarda habilitação',
-    simples:'Simples',
-    modelo50:'Modelo 50%',
-    desagio_flex:'Deságio flexível'
-  };
-  if(sel.size===0){
-    if(ph){ph.style.display='';ph.textContent='Selecione';}
-  } else {
-    if(ph)ph.style.display='none';
-    sel.forEach(function(v){
-      var tag=document.createElement('span');
-      tag.className='ms-tag';
-      tag.textContent=labels[v]||v;
-      trigger.insertBefore(tag,ph);
-    });
-  }
-  // toggle deságio flexível
-  toggleModeloCredit(creditId);
+  if(ph){if(sel.size===0){ph.textContent='Selecione';}else{ph.textContent=sel.size+' selecionado(s)';}}
+  var dfWrap=document.getElementById(creditId+'-df-wrap');
+  if(dfWrap)dfWrap.style.display=sel.has('desagio_flex')?'block':'none';
 }
 
-function rmCredit(id){
-  // verifica se está vinculado a alguma movimentação
-  var vinculados=movimentacoesVinculadas(id);
-  if(vinculados.length>0){
-    var errEl=document.getElementById(id+'-error');
-    if(errEl){
-      var labels=vinculados.map(function(mid,i){return'Movimentação '+(i+1);});
-      errEl.textContent='Não é possível remover: este crédito está vinculado a '+labels.join(', ')+'. Desvincule antes de remover.';
-      errEl.style.display='block';
-      setTimeout(function(){if(errEl)errEl.style.display='none';},5000);
-    }
-    return;
-  }
-  var e=document.getElementById(id);
-  if(e)e.remove();
-  delete credits[id];
-  recalcAll();
-}
+function eRmCredit(id){var e=document.getElementById(id);if(e)e.remove();delete eCredits[id];eRecalcAll();}
 
-function rcCredit(id){
-  var bruto=num(document.getElementById(id+'-bruto').value);
-  var ir=num(document.getElementById(id+'-ir').value);
-  var desRaw=document.getElementById(id+'-des').value;
-  var des=parseFloat(desRaw.replace(',','.'))||0;
-  var abat=num(document.getElementById(id+'-abat').value);
+function eRcCredit(id){
+  var bruto=eNum((document.getElementById(id+'-bruto')||{}).value);
+  var ir=eNum((document.getElementById(id+'-ir')||{}).value);
+  var des=parseFloat(((document.getElementById(id+'-des')||{}).value||'0').replace(',','.'))||0;
+  var abat=eNum((document.getElementById(id+'-abat')||{}).value);
   var ded=bruto-ir;
   var dep=ded*(1-des/100);
   var tot=dep-abat;
-  setI(id+'-ded', ded>=0?brl(ded):'');
-  setI(id+'-dep', dep>=0?brl(dep):'');
-  setI(id+'-total', tot>=0?brl(tot):'');
-  // deságio flexível por crédito — verifica se o checkbox existe e está marcado
-  var chkDf=document.getElementById(id+'-chk-df');
-  var dfAtivo=chkDf?chkDf.checked:false;
-  if(dfAtivo){
-    var dfPctRaw=document.getElementById(id+'-df-pct');
-    var dfPct=dfPctRaw?parseFloat(dfPctRaw.value.replace(',','.'))||0:0;
-    var dfDep=tot*(1-dfPct/100);
-    var dfRec=tot-dfDep;
-    setI(id+'-df-dep',brl(dfDep));
-    setI(id+'-df-rec',brl(dfRec));
-    setI(id+'-df-dev',brl(dfRec));
+  eSetI(id+'-ded',eBrl(ded));eSetI(id+'-dep',eBrl(dep));eSetI(id+'-total',eBrl(tot));
+  var dfWrap=document.getElementById(id+'-df-wrap');
+  if(dfWrap&&dfWrap.style.display!=='none'){
+    var dfPct=parseFloat(((document.getElementById(id+'-df-pct')||{}).value||'0').replace(',','.'))||0;
+    var dfDep=tot*(1-dfPct/100);var dfRec=tot-dfDep;
+    eSetI(id+'-df-dep',eBrl(dfDep));eSetI(id+'-df-rec',eBrl(dfRec));eSetI(id+'-df-dev',eBrl(dfRec));
   }
-  credits[id]={bruto:bruto,ir:ir,desagio:des,abatimento:abat,deduzido:ded,deposito:dep,depTotal:tot};
-  recalcAll();
+  eCredits[id]={bruto:bruto,ir:ir,desagio:des,abatimento:abat,deduzido:ded,deposito:dep,depTotal:tot};
+  eRecalcAll();
 }
 
-function recalcAll(){
+function eRecalcAll(){
   var tB=0,tI=0,tD=0,tA=0,dN=0,dDen=0;
-  Object.keys(credits).forEach(function(id){
-    var c=credits[id];if(!c)return;
-    tB+=c.bruto||0; tI+=c.ir||0; tD+=c.deposito||0; tA+=c.abatimento||0;
-    dN+=(c.desagio||0)*(c.bruto||0); dDen+=c.bruto||0;
-  });
+  Object.keys(eCredits).forEach(function(id){var c=eCredits[id];if(!c)return;tB+=c.bruto||0;tI+=c.ir||0;tD+=c.deposito||0;tA+=c.abatimento||0;dN+=(c.desagio||0)*(c.bruto||0);dDen+=c.bruto||0;});
   var depFinal=tD-tA;
   var dMed=dDen>0?dN/dDen:0;
   var receita=tB-depFinal;
-  // Eficiência = Deságio médio real ÷ Deságio alvo
-  var dAlvo=parseFloat((document.getElementById('g-desagio').value||'0').replace(',','.'))||0;
+  var dAlvo=parseFloat((document.getElementById('e-g-desagio')||{value:'0'}).value)||0;
   var efic=dAlvo>0?dMed/dAlvo*100:0;
-  setT('cf-contrato',brl(tB));
-  setT('cf-desagio',pf(dMed));
-  setT('cf-ir',brl(tI));
-  setT('cf-deposito',brl(tD));
-  setT('cf-abatimento',brl(tA));
-  setT('cf-depfinal',brl(depFinal));
-  setT('cf-eficiencia',dAlvo>0?pf(efic):'—');
-  setT('cf-receita',brl(receita));
-  var eficEl=document.getElementById('cf-eficiencia');
-  if(eficEl&&dAlvo>0){
-    eficEl.style.color=efic>=100?'#27500A':'#A32D2D';
-  } else if(eficEl){
-    eficEl.style.color='';
-  }
-  var totalDed=tB-tI;
-  setT('sv-ref',brl(totalDed));
-  setT('sv-deptotal',brl(depFinal));
-  recalcParc(); updateSum();
+  eSetT('e-cf-contrato',eBrl(tB));eSetT('e-cf-desagio',ePct(dMed));eSetT('e-cf-ir',eBrl(tI));eSetT('e-cf-deposito',eBrl(tD));
+  eSetT('e-cf-abatimento',eBrl(tA));eSetT('e-cf-depfinal',eBrl(depFinal));eSetT('e-cf-receita',eBrl(receita));
+  eSetT('e-cf-eficiencia',dAlvo>0?ePct(efic):'—');
+  eSetT('e-sv-ref',eBrl(tB-tI));eSetT('e-sv-deptotal',eBrl(depFinal));
+  eRecalcParc();eUpdateSum();
+}
+function eRecalcParc(){
+  if(!(document.getElementById('e-chkParc')||{}).checked)return;
+  var base=eNum((document.getElementById('e-cf-depfinal')||{}).textContent);
+  var pPct=parseFloat(((document.getElementById('e-parc-pct')||{}).value||'0').replace(',','.'))||0;
+  eSetI('e-parc-valor',eBrl(base*pPct/100));
 }
 
-// Deságio flexível:
-//   Dep. total flex = Dep. final × (1 − Deságio flex%)
-//   Receita flex = Dep. final − Dep. total flex
-//   Devolução = Dep. final − Dep. total flex
-var parcSelections=new Set();
-
-function toggleParcMs(){
-  var dd=document.getElementById('parc-ms-dd');
-  var trigger=document.getElementById('parc-ms-trigger');
-  if(!dd||!trigger)return;
-  // reconstrói opções com créditos atuais
-  var ids=Object.keys(credits);
-  if(ids.length===0){dd.innerHTML='<div class="ms-none">Nenhum crédito cadastrado</div>';}
-  else{
-    dd.innerHTML=ids.map(function(cid,i){
-      var checked=parcSelections.has(cid)?'checked':'';
-      var bg=parcSelections.has(cid)?'background:#EBF4FD;':'';
-      return '<div class="ms-opt" id="parc-opt-'+cid+'" style="'+bg+'" onclick="toggleParcOpt(\''+cid+'\',this)">'+
-        '<input type="checkbox" '+checked+' onclick="event.stopPropagation()"/> '+
-        '<span>Crédito '+(i+1)+'</span>'+
-        '<span class="ms-opt-meta">'+brl(credits[cid].depTotal||0)+'</span>'+
-      '</div>';
-    }).join('');
-  }
-  var isOpen=dd.classList.contains('open');
-  if(isOpen){dd.classList.remove('open');trigger.classList.remove('open');}
-  else{dd.classList.add('open');trigger.classList.add('open');}
+var eMCount=0,eMovSels={};
+function eAddMov(){
+  eMCount++;var n=eMCount,id='emov'+n;eMovSels[id]=new Set();
+  var d=document.createElement('div');d.className='e-mov-item';d.id=id;
+  d.innerHTML='<div class="e-mov-hd">'+
+    '<select class="e-tipo-sel" onchange="eRenderMov(\''+id+'\',this.value)">'+
+      '<option value="">Selecione o tipo</option><option value="dep">Depósito</option><option value="rec">Recebimento</option><option value="dev">Devolução</option>'+
+    '</select>'+
+    '<button class="e-rm-btn" style="margin-left:auto" onclick="eRemoveMov(\''+id+'\')">Remover</button>'+
+  '</div><div id="'+id+'-f"></div>';
+  document.getElementById('e-mov-list').appendChild(d);
 }
-
-function toggleParcOpt(cid,optEl){
-  var chk=optEl.querySelector('input[type=checkbox]');
-  if(parcSelections.has(cid)){
-    parcSelections.delete(cid);
-    if(chk)chk.checked=false;
-    optEl.style.background='';
-  } else {
-    parcSelections.add(cid);
-    if(chk)chk.checked=true;
-    optEl.style.background='#EBF4FD';
-  }
-  // atualiza tags
-  var trigger=document.getElementById('parc-ms-trigger');
-  var ph=document.getElementById('parc-ms-ph');
-  if(!trigger)return;
-  trigger.querySelectorAll('.ms-tag').forEach(function(t){t.remove();});
-  if(parcSelections.size===0){
-    if(ph){ph.style.display='';ph.textContent='Todos os créditos';}
-  } else {
-    if(ph)ph.style.display='none';
-    var ids=Object.keys(credits);
-    parcSelections.forEach(function(c){
-      var idx=ids.indexOf(c)+1;
-      var tag=document.createElement('span');
-      tag.className='ms-tag';tag.textContent='Crédito '+idx;
-      trigger.insertBefore(tag,ph);
-    });
-  }
-  recalcParc();
-}
-
-function recalcParc(){
-  if(!document.getElementById('chkParc').checked)return;
-  var base=0;
-  if(parcSelections.size===0){
-    base=num(document.getElementById('cf-depfinal').textContent);
-  } else {
-    parcSelections.forEach(function(cid){
-      if(credits[cid])base+=credits[cid].depTotal||0;
-    });
-  }
-  var pPct=parseFloat((document.getElementById('parc-pct').value||'0').replace(',','.'))||0;
-  setI('parc-valor',brl(base*pPct/100));
-}
-
-// ── movimentações ──────────────────────────────────────────────
-var mCount=0;
-// seleções de créditos por movimentação: { movId: Set(creditId) }
-var movSelections={};
-
-function addMov(){
-  mCount++;
-  var n=mCount, id='mov'+n;
-  movSelections[id]=new Set();
-  var d=document.createElement('div');
-  d.className='mov-item';d.id=id;
-  d.innerHTML=
-    '<div class="mov-hd">'+
-      '<select class="tipo-sel" onchange="renderMov(\''+id+'\',this.value)">'+
-        '<option value="">Selecione o tipo</option>'+
-        '<option value="dep">Depósito</option>'+
-        '<option value="rec">Recebimento</option>'+
-        '<option value="dev">Devolução</option>'+
-      '</select>'+
-      '<button class="rm-btn" style="margin-left:auto" onclick="removeMov(\''+id+'\')">Remover</button>'+
-    '</div>'+
-    '<div id="'+id+'-f"></div>';
-  document.getElementById('mov-list').appendChild(d);
-}
-
-function removeMov(id){
-  var e=document.getElementById(id);
-  if(e)e.remove();
-  delete movSelections[id];
-  updateSum();
-}
-
-function renderMov(id,tipo){
+function eRemoveMov(id){var e=document.getElementById(id);if(e)e.remove();delete eMovSels[id];eUpdateSum();}
+function eRenderMov(id,tipo){
   var c=document.getElementById(id+'-f');
   if(tipo==='dep'){
-    movSelections[id]=new Set();
-    c.innerHTML=
-      '<div class="row col3">'+
-        '<div class="field"><label>Data do depósito para o cliente</label><input type="date"/></div>'+
-        '<div class="field"><label>Valor depositado ao cliente (R$)</label><input type="text" inputmode="numeric" id="'+id+'-vd" placeholder="R$ 0,00" oninput="maskMoney(this);updateSum()"/></div>'+
-        '<div class="field"><label>Origem do funding</label><select>'+
-          '<option value="">Selecione a origem</option>'+
-          '<option>A verificar</option>'+
-          '<option>Debênture</option>'+
-          '<option>Debênture 1</option>'+
-          '<option>Debênture 2</option>'+
-          '<option>Debênture 3</option>'+
-          '<option>Debênture 4</option>'+
-          '<option>Debênture pago Itaú Movimento</option>'+
-          '<option>Investidores</option>'+
-          '<option>JusCash</option>'+
-          '<option>Strategius</option>'+
-        '</select></div>'+
-      '</div>'+
-      // multiselect créditos no depósito
-      '<div class="field" style="margin-top:8px">'+
-        '<label>Créditos vinculados <span style="font-weight:400;color:#aaa">(opcional)</span></label>'+
-        '<div class="ms-wrap" id="'+id+'-ms-wrap">'+
-          '<div class="ms-trigger" id="'+id+'-ms-trigger" onclick="toggleMs(\''+id+'\')">'+
-            '<span class="placeholder" id="'+id+'-ms-ph">Nenhum crédito vinculado</span>'+
-          '</div>'+
-          '<svg class="ms-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l4 4 4-4"/></svg>'+
-          '<div class="ms-dropdown" id="'+id+'-ms-dd">'+buildMsOptions(id)+'</div>'+
-        '</div>'+
-      '</div>';
-
+    c.innerHTML='<div class="e-row e-col3"><div class="e-field"><label>Data do depósito</label><input type="date"/></div><div class="e-field"><label>Valor depositado (R$)</label><input type="text" id="'+id+'-vd" placeholder="R$ 0,00" oninput="eMaskMoney(this);eUpdateSum()"/></div><div class="e-field"><label>Origem do funding</label><select><option value="">Selecione</option><option>JusCash</option><option>Debênture</option><option>Investidores</option></select></div></div>';
   } else if(tipo==='rec'){
-    var irTotal=Object.values(credits).reduce(function(s,c){return s+(c.ir||0);},0);
-    movSelections[id]=new Set();
-
-    c.innerHTML=
-      // valor + data
-      '<div class="row col2">'+
-        '<div class="field"><label>Valor recebido da liquidação</label><input type="text" inputmode="numeric" id="'+id+'-vr" placeholder="R$ 0,00" oninput="maskMoney(this);updateSum();calcPendente(\''+id+'\')"/></div>'+
-        '<div class="field"><label>Data do recebimento</label><input type="date"/></div>'+
-      '</div>'+
-
-      // toggle parcial + campo valor pendente (oculto por padrão)
-      '<div class="toggle-row" style="margin-bottom:4px">'+
-        '<label class="toggle"><input type="checkbox" id="'+id+'-parcial-chk" onchange="toggleParcial(\''+id+'\')"/><span class="tslider"></span></label>'+
-        '<span>Recebimento parcial</span>'+
-      '</div>'+
-      '<div id="'+id+'-pendente-wrap" style="display:none;margin-bottom:12px">'+
-        '<div class="field"><label>Valor pendente</label><input class="calc" type="text" id="'+id+'-pendente" placeholder="R$ 0,00" readonly/></div>'+
-      '</div>'+
-
-      // origem
-      '<div class="field" style="margin-bottom:12px"><label>Origem do recebimento</label>'+
-        '<select>'+
-          '<option value="">Selecione a origem</option>'+
-          '<option>Não definido</option>'+
-          '<option>Abatimento</option>'+
-          '<option>Aditivo</option>'+
-          '<option>Compensação</option>'+
-          '<option>Depósito direto da conta da JusCash</option>'+
-          '<option>Depósito do cliente</option>'+
-          '<option>Direto</option>'+
-          '<option>Do cliente</option>'+
-          '<option>Levantamento BB</option>'+
-          '<option>Levantamento CEF</option>'+
-          '<option>Saque de alvará em agência bancária</option>'+
-        '</select>'+
-      '</div>'+
-
-      // multiselect créditos
-      '<div class="field" style="margin-bottom:12px">'+
-        '<label>Créditos vinculados <span style="font-weight:400;color:#aaa">(opcional)</span></label>'+
-        '<div class="ms-wrap" id="'+id+'-ms-wrap">'+
-          '<div class="ms-trigger" id="'+id+'-ms-trigger" onclick="toggleMs(\''+id+'\')">'+
-            '<span class="placeholder" id="'+id+'-ms-ph">Nenhum crédito vinculado</span>'+
-          '</div>'+
-          '<svg class="ms-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l4 4 4-4"/></svg>'+
-          '<div class="ms-dropdown" id="'+id+'-ms-dd">'+buildMsOptions(id)+'</div>'+
-        '</div>'+
-        '<div class="ms-ir-note" id="'+id+'-ir-note">'+
-          '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M7 6v4M7 4.5v.5"/></svg>'+
-          'IR previsto calculado com todos os créditos. Vincule créditos para calcular apenas os selecionados.'+
-        '</div>'+
-      '</div>'+
-
-      // IR block
-      '<div class="ir-block">'+
-        '<div class="ir-block-title">Imposto de renda</div>'+
-        '<div class="row col3">'+
-          '<div class="field"><label>Desconto de IR previsto</label>'+
-            '<input class="calc" type="text" id="'+id+'-irp" value="'+brl(irTotal)+'" readonly/>'+
-          '</div>'+
-          '<div class="field"><label>Desconto de IR realizado</label>'+
-            '<input type="text" inputmode="numeric" id="'+id+'-irr" placeholder="R$ 0,00" oninput="maskMoney(this);calcIrDevolucao(\''+id+'\')"/>'+
-          '</div>'+
-          '<div class="field"><label>Devolução de IR ao cliente</label>'+
-            '<input class="calc" type="text" id="'+id+'-ird" placeholder="R$ 0,00" readonly/>'+
-          '</div>'+
-        '</div>'+
-        // status + data condicional
-        '<div class="row col2">'+
-          '<div class="field"><label>Status da devolução</label>'+
-            '<select id="'+id+'-ir-status" onchange="toggleIrData(\''+id+'\')">'+
-              '<option value="">Selecione o status</option>'+
-              '<option value="devolver">Devolver</option>'+
-              '<option value="verificar">Verificar com o jurídico</option>'+
-              '<option value="nao_devolver">Não devolver</option>'+
-              '<option value="devolvido">Devolvido</option>'+
-              '<option value="cliente_deve">Cliente deve IR</option>'+
-            '</select>'+
-          '</div>'+
-          '<div class="field" id="'+id+'-ir-data-wrap" style="display:none">'+
-            '<label>Data da devolução</label><input type="date"/>'+
-          '</div>'+
-        '</div>'+
+    var irTotal=Object.values(eCredits).reduce(function(s,c){return s+(c.ir||0);},0);
+    c.innerHTML='<div class="e-row e-col2"><div class="e-field"><label>Valor recebido</label><input type="text" id="'+id+'-vr" placeholder="R$ 0,00" oninput="eMaskMoney(this);eUpdateSum()"/></div><div class="e-field"><label>Data do recebimento</label><input type="date"/></div></div>'+
+      '<div class="e-toggle-row"><label class="e-toggle"><input type="checkbox" id="'+id+'-parcial" onchange="eToggleParcial(\''+id+'\')"/><span class="e-tslider"></span></label><span>Recebimento parcial</span></div>'+
+      '<div id="'+id+'-pend-wrap" style="display:none;margin-bottom:12px"><div class="e-field"><label>Valor pendente</label><input class="e-calc" type="text" id="'+id+'-pendente" readonly placeholder="R$ 0,00"/></div></div>'+
+      '<div class="e-ir-block"><div class="e-ir-title">Imposto de renda</div>'+
+        '<div class="e-row e-col3"><div class="e-field"><label>IR previsto</label><input class="e-calc" type="text" id="'+id+'-irp" value="'+eBrl(irTotal)+'" readonly/></div><div class="e-field"><label>IR realizado</label><input type="text" id="'+id+'-irr" placeholder="R$ 0,00" oninput="eMaskMoney(this)"/></div><div class="e-field"><label>Devolução IR</label><input class="e-calc" type="text" id="'+id+'-ird" readonly placeholder="R$ 0,00"/></div></div>'+
+        '<div class="e-row e-col2"><div class="e-field"><label>Status devolução</label><select><option value="">Selecione</option><option>Devolver</option><option>Não devolver</option><option>Devolvido</option><option>Cliente deve IR</option></select></div><div></div></div>'+
       '</div>';
-
   } else if(tipo==='dev'){
-    movSelections[id]=new Set();
-    c.innerHTML=
-      '<div class="row col3">'+
-        '<div class="field"><label>Data da devolução</label><input type="date"/></div>'+
-        '<div class="field"><label>Valor devolvido (R$)</label><input type="text" inputmode="numeric" placeholder="R$ 0,00" oninput="maskMoney(this)"/></div>'+
-        '<div class="field"><label>Tipo de devolução</label>'+
-          '<select>'+
-            '<option value="">Selecione</option>'+
-            '<option>IR</option>'+
-            '<option>Deságio flexível</option>'+
-          '</select>'+
-        '</div>'+
-      '</div>'+
-      '<div class="field" style="margin-top:8px">'+
-        '<label>Créditos vinculados <span style="font-weight:400;color:#aaa">(opcional)</span></label>'+
-        '<div class="ms-wrap" id="'+id+'-ms-wrap">'+
-          '<div class="ms-trigger" id="'+id+'-ms-trigger" onclick="toggleMs(\''+id+'\')">'+
-            '<span class="placeholder" id="'+id+'-ms-ph">Nenhum crédito vinculado</span>'+
-          '</div>'+
-          '<svg class="ms-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l4 4 4-4"/></svg>'+
-          '<div class="ms-dropdown" id="'+id+'-ms-dd">'+buildMsOptions(id)+'</div>'+
-        '</div>'+
-      '</div>';
-
-  } else {
-    c.innerHTML='';
-  }
+    c.innerHTML='<div class="e-row e-col3"><div class="e-field"><label>Data da devolução</label><input type="date"/></div><div class="e-field"><label>Valor devolvido (R$)</label><input type="text" placeholder="R$ 0,00" oninput="eMaskMoney(this)"/></div><div class="e-field"><label>Tipo de devolução</label><select><option value="">Selecione</option><option>IR</option><option>Deságio flexível</option></select></div></div>';
+  } else {c.innerHTML='';}
 }
-
-// mostra/oculta campo valor pendente + calcula
-function toggleParcial(id){
-  var chk=document.getElementById(id+'-parcial-chk');
-  var wrap=document.getElementById(id+'-pendente-wrap');
-  if(!chk||!wrap)return;
-  wrap.style.display=chk.checked?'block':'none';
-  if(chk.checked)calcPendente(id);
+function eToggleParcial(id){
+  var chk=document.getElementById(id+'-parcial');
+  var wrap=document.getElementById(id+'-pend-wrap');
+  if(chk&&wrap)wrap.style.display=chk.checked?'block':'none';
 }
-
-// valor pendente = depósito final do comercial − valor recebido
-// se créditos vinculados: usa só o total desses créditos; senão usa depFinal geral
-function calcPendente(id){
-  var chk=document.getElementById(id+'-parcial-chk');
-  if(!chk||!chk.checked)return;
-  var sel=movSelections[id];
-  var referencia=0;
-  if(sel&&sel.size>0){
-    sel.forEach(function(cid){if(credits[cid])referencia+=credits[cid].depTotal||0;});
-  } else {
-    var el=document.getElementById('cf-depfinal');
-    referencia=el?num(el.textContent):0;
-  }
-  var recebido=num((document.getElementById(id+'-vr')||{}).value||'');
-  var pendente=referencia-recebido;
-  var el=document.getElementById(id+'-pendente');
-  if(el)el.value=brl(pendente);
-}
-
-// devolução IR = previsto − realizado (pode ser negativo)
-function calcIrDevolucao(id){
-  var prev=num((document.getElementById(id+'-irp')||{}).value||'');
-  var real=num((document.getElementById(id+'-irr')||{}).value||'');
-  var dev=prev-real;
-  var el=document.getElementById(id+'-ird');
-  if(el)el.value=brl(dev);
-}
-
-// exibe data devolução só quando status = Devolver ou Cliente deve IR
-function toggleIrData(id){
-  var sel=document.getElementById(id+'-ir-status');
-  var wrap=document.getElementById(id+'-ir-data-wrap');
-  if(!sel||!wrap)return;
-  var show=sel.value==='devolver'||sel.value==='cliente_deve';
-  wrap.style.display=show?'block':'none';
-}
-
-// constrói as options do multiselect com base nos créditos cadastrados
-function buildMsOptions(movId){
-  var ids=Object.keys(credits);
-  if(ids.length===0) return '<div class="ms-none">Nenhum crédito cadastrado no Comercial</div>';
-  return ids.map(function(cid,i){
-    var c=credits[cid];
-    var cedente=document.querySelector('#'+cid+' select:first-of-type');
-    var tipo=document.querySelector('#'+cid+' select:nth-of-type(2)');
-    var cedLabel=cedente&&cedente.value?cedente.value:'Cedente '+(i+1);
-    var tipoLabel=tipo&&tipo.value?tipo.value:'Crédito '+(i+1);
-    var irLabel=c.ir>0?brl(c.ir):'IR: —';
-    return '<div class="ms-opt" id="'+movId+'-opt-'+cid+'" onclick="toggleMsOpt(\''+movId+'\',\''+cid+'\',this)">'+
-      '<input type="checkbox" id="'+movId+'-chk-'+cid+'" onclick="event.stopPropagation()"/>'+
-      '<span>'+cedLabel+' — '+tipoLabel+'</span>'+
-      '<span class="ms-opt-meta">'+irLabel+'</span>'+
-    '</div>';
-  }).join('');
-}
-
-function toggleMs(movId){
-  var trigger=document.getElementById(movId+'-ms-trigger');
-  var dd=document.getElementById(movId+'-ms-dd');
-  if(!trigger||!dd)return;
-  var isOpen=dd.classList.contains('open');
-  if(isOpen){closeMs(movId);}
-  else{
-    // reconstrói options caso créditos tenham mudado
-    dd.innerHTML=buildMsOptions(movId);
-    // remarca os já selecionados
-    (movSelections[movId]||new Set()).forEach(function(cid){
-      var chk=document.getElementById(movId+'-chk-'+cid);
-      var opt=document.getElementById(movId+'-opt-'+cid);
-      if(chk)chk.checked=true;
-      if(opt)opt.style.background='#EBF4FD';
-    });
-    dd.classList.add('open');
-    trigger.classList.add('open');
-  }
-}
-
-function closeMs(movId){
-  var trigger=document.getElementById(movId+'-ms-trigger');
-  var dd=document.getElementById(movId+'-ms-dd');
-  if(trigger)trigger.classList.remove('open');
-  if(dd)dd.classList.remove('open');
-}
-
-function toggleMsOpt(movId,cid,optEl){
-  var sel=movSelections[movId];
-  if(!sel)return;
-  var chk=document.getElementById(movId+'-chk-'+cid);
-  if(sel.has(cid)){
-    sel.delete(cid);
-    if(chk)chk.checked=false;
-    optEl.style.background='';
-  } else {
-    sel.add(cid);
-    if(chk)chk.checked=true;
-    optEl.style.background='#EBF4FD';
-  }
-  updateMsTags(movId);
-  updateIrPrevisto(movId);
-}
-
-function updateMsTags(movId){
-  var sel=movSelections[movId];
-  var trigger=document.getElementById(movId+'-ms-trigger');
-  var ph=document.getElementById(movId+'-ms-ph');
-  if(!trigger||!sel)return;
-
-  // remove tags antigas
-  trigger.querySelectorAll('.ms-tag').forEach(function(t){t.remove();});
-
-  if(sel.size===0){
-    if(ph){ph.style.display='';ph.textContent='Nenhum crédito vinculado';}
-  } else {
-    if(ph)ph.style.display='none';
-    sel.forEach(function(cid,i){
-      var c=credits[cid];
-      var idx=Object.keys(credits).indexOf(cid)+1;
-      var tag=document.createElement('span');
-      tag.className='ms-tag';
-      tag.id=movId+'-tag-'+cid;
-      tag.innerHTML='Crédito '+idx+' <button onclick="removeMsTag(\''+movId+'\',\''+cid+'\',event)">×</button>';
-      trigger.insertBefore(tag,ph);
-    });
-  }
-
-  // atualiza nota
-  var note=document.getElementById(movId+'-ir-note');
-  if(note){
-    note.style.display=sel.size>0?'none':'flex';
-  }
-}
-
-function removeMsTag(movId,cid,evt){
-  evt.stopPropagation();
-  var sel=movSelections[movId];
-  if(sel)sel.delete(cid);
-  var chk=document.getElementById(movId+'-chk-'+cid);
-  var opt=document.getElementById(movId+'-opt-'+cid);
-  if(chk)chk.checked=false;
-  if(opt)opt.style.background='';
-  updateMsTags(movId);
-  updateIrPrevisto(movId);
-}
-
-// recalcula IR previsto com base nos créditos selecionados (ou todos se nenhum)
-function updateIrPrevisto(movId){
-  var sel=movSelections[movId];
-  var irEl=document.getElementById(movId+'-irp');
-  if(!irEl)return;
-  var irVal=0;
-  if(!sel||sel.size===0){
-    irVal=Object.values(credits).reduce(function(s,c){return s+(c.ir||0);},0);
-  } else {
-    sel.forEach(function(cid){if(credits[cid])irVal+=credits[cid].ir||0;});
-  }
-  irEl.value=brl(irVal);
-  calcIrDevolucao(movId);
-  calcPendente(movId);
-}
-
-function updateSum(){
+function eUpdateSum(){
   var deps=0,recs=0;
-  document.querySelectorAll('[id$="-vd"]').forEach(function(e){deps+=num(e.value);});
-  document.querySelectorAll('[id$="-vr"]').forEach(function(e){recs+=num(e.value);});
-  // saldo = Σ valor deduzido IR (o que o juiz deve pagar) − total já recebido
-  var totalDed=Object.values(credits).reduce(function(s,c){return s+(c.deduzido||0);},0);
+  document.querySelectorAll('[id^="emov"][id$="-vd"]').forEach(function(e){deps+=eNum(e.value);});
+  document.querySelectorAll('[id^="emov"][id$="-vr"]').forEach(function(e){recs+=eNum(e.value);});
+  var totalDed=Object.values(eCredits).reduce(function(s,c){return s+(c.deduzido||0);},0);
   var saldo=totalDed-recs;
-  setT('sv-dep',brl(deps));
-  setT('sv-rec',brl(recs));
-  setT('sv-saldo',brl(saldo));
-  var saldoEl=document.getElementById('sv-saldo');
-  if(saldoEl)saldoEl.style.color=saldo<=0?'#27500A':'#A32D2D';
+  eSetT('e-sv-dep',eBrl(deps));eSetT('e-sv-rec',eBrl(recs));eSetT('e-sv-saldo',eBrl(saldo));
 }
 
-// ── FASES PROCESSUAIS ─────────────────────────────────────────
-var FASES={
-  publico:[
-    '1. Feita petição inicial de execução (autor)',
-    '2. Feita a impugnação (executado)',
-    '3. Feita a manifestação (autor)',
-    '4. Sentença proferida',
-    '5. Recurso apresentado',
-    '6. Acórdão proferido',
-    '7.1. Cálculo homologado, ainda sem petição',
-    '7.2. Cálculo homologado, já com petição',
-    '8. Feito o mandado de expedição de RPV / Alvará',
-    '8.1 Apresentado ofício requisitório (demonstrativo RPV)',
-    '9. RPV / Alvará expedido'
-  ],
-  privado_concordancia:[
-    '1. Feita petição inicial de execução (autor) / Feito Depósito (executado)',
-    '2. Decisão - Recebimento da Execução / Decisão - Intimação Autor do Depósito',
-    'Concordância - 3. Depósito (executado) / Concordância autor',
-    'Concordância - 4. Sentença proferida',
-    'Concordância - 5. Petição de Alvará',
-    'Concordância - 6. Decisão de Extinção e Determinado o Alvará',
-    'Concordância - 7. Alvará expedido'
-  ],
-  privado_discordancia:[
-    '1. Feita petição inicial de execução (autor) / Feito Depósito (executado)',
-    '2. Decisão - Recebimento da Execução / Decisão - Intimação Autor do Depósito',
-    'Discordância - 3. Depósito em Garantia (executado) / Impugnação iniciando execução do excedente (autor)',
-    'Discordância - 4. Feita a impugnação (executado)',
-    'Discordância - 5. Sentença proferida',
-    'Discordância - 6. Recurso apresentado',
-    'Discordância - 7. Acórdão proferido',
-    'Discordância - 8.1. Petição de Alvará com ou sem pedido de Remanescente',
-    'Discordância - 8.2. Concordância do Devedor e depósito complementar',
-    'Discordância - 9. Decisão de Extinção e Determinado o Alvará',
-    'Discordância - 10. Alvará expedido'
-  ],
-  pericial:[
-    'Fase 1 - Nomeação do perito',
-    'Fase 2 - Decisão homologando valor do perito',
-    'Fase 3 - Perícia agendada',
-    'Fase 4 - Laudo entregue',
-    'Fase 5 (Concordância) - Concordância com o laudo',
-    'Fase 6 (Concordância) - Decisão homologando o laudo',
-    'Fase 7 (Concordância) - Petição de expedição alvará/RPV',
-    'Fase 8 (Concordância) - RPV expedido',
-    'Fase 9 (Concordância) - Alvará expedido',
-    'Fase 5 (Discordância) - Impugnação do laudo',
-    'Fase 6 (Discordância) - Laudo complementar',
-    'Fase 7 (Discordância) - Manifestação das partes/decisão homologando o laudo',
-    'Fase 8 (Discordância) - Petição de expedição alvará/RPV',
-    'Fase 9 (Discordância) - RPV expedido',
-    'Fase 10 (Discordância) - Alvará expedido'
-  ],
-  pericial_concordancia:[
-    'Fase 1 - Nomeação do perito',
-    'Fase 2 - Decisão homologando valor do perito',
-    'Fase 3 - Perícia agendada',
-    'Fase 4 - Laudo entregue',
-    'Fase 5 - Concordância com o laudo',
-    'Fase 6 - Decisão homologando o laudo',
-    'Fase 7 - Petição de expedição alvará/RPV',
-    'Fase 8 - RPV expedido',
-    'Fase 9 - Alvará expedido'
-  ],
-  pericial_discordancia:[
-    'Fase 1 - Nomeação do perito',
-    'Fase 2 - Decisão homologando valor do perito',
-    'Fase 3 - Perícia agendada',
-    'Fase 4 - Laudo entregue',
-    'Fase 5 - Impugnação do laudo',
-    'Fase 6 - Laudo complementar',
-    'Fase 7 - Manifestação das partes/decisão homologando o laudo',
-    'Fase 8 - Petição de expedição alvará/RPV',
-    'Fase 9 - RPV expedido',
-    'Fase 10 - Alvará expedido'
-  ]
+var EFASES={
+  publico:['1. Petição inicial','2. Impugnação','3. Manifestação','4. Sentença','5. Recurso','6. Acórdão','7.1. Cálculo homologado sem petição','7.2. Cálculo homologado com petição','8. Mandado de expedição RPV/Alvará','8.1 Ofício requisitório','9. RPV/Alvará expedido'],
+  privado_concordancia:['1. Petição inicial / Depósito','2. Decisão - Recebimento da Execução','Concordância - 3. Depósito','Concordância - 4. Sentença','Concordância - 5. Petição Alvará','Concordância - 6. Extinção e Alvará','Concordância - 7. Alvará expedido'],
+  privado_discordancia:['1. Petição inicial / Depósito','2. Decisão - Recebimento da Execução','Discordância - 3. Depósito em Garantia','Discordância - 4. Impugnação','Discordância - 5. Sentença','Discordância - 6. Recurso','Discordância - 7. Acórdão','Discordância - 8.1. Petição Alvará','Discordância - 8.2. Depósito complementar','Discordância - 9. Extinção e Alvará','Discordância - 10. Alvará expedido'],
+  pericial_concordancia:['Fase 1 - Nomeação perito','Fase 2 - Homologação valor','Fase 3 - Perícia agendada','Fase 4 - Laudo entregue','Fase 5 - Concordância','Fase 6 - Homologação laudo','Fase 7 - Petição expedição','Fase 8 - RPV expedido','Fase 9 - Alvará expedido'],
+  pericial_discordancia:['Fase 1 - Nomeação perito','Fase 2 - Homologação valor','Fase 3 - Perícia agendada','Fase 4 - Laudo entregue','Fase 5 - Impugnação','Fase 6 - Laudo complementar','Fase 7 - Decisão homologação','Fase 8 - Petição expedição','Fase 9 - RPV expedido','Fase 10 - Alvará expedido']
 };
-
-function updateFaseProcessual(){
-  var tipoReu=document.getElementById('tipo-reu');
-  var faseSelect=document.getElementById('fase-processual');
-  if(!tipoReu||!faseSelect)return;
-  var tr=tipoReu.value;
-  var lista=FASES[tr]||[];
-  var current=faseSelect.value;
-  faseSelect.innerHTML='<option value="">Selecione</option>';
-  if(lista.length===0){
-    faseSelect.innerHTML='<option value="">Selecione o tipo do réu primeiro</option>';
-    return;
-  }
-  lista.forEach(function(f){
-    var opt=document.createElement('option');
-    opt.value=f; opt.textContent=f;
-    if(f===current) opt.selected=true;
-    faseSelect.appendChild(opt);
-  });
+function eUpdateFase(){
+  var tr=document.getElementById('e-tipo-reu');
+  var fs=document.getElementById('e-fase');
+  if(!tr||!fs)return;
+  var lista=EFASES[tr.value]||[];
+  fs.innerHTML='<option value="">Selecione</option>';
+  lista.forEach(function(f){var o=document.createElement('option');o.value=f;o.textContent=f;fs.appendChild(o);});
 }
 
-// inicia com 1 crédito
-addCredit();
-
-// fecha qualquer multiselect aberto ao clicar fora
 document.addEventListener('click',function(e){
-  document.querySelectorAll('.ms-wrap').forEach(function(wrap){
-    if(!wrap.contains(e.target)){
-      var dd=wrap.querySelector('.ms-dropdown');
-      var tr=wrap.querySelector('.ms-trigger');
-      if(dd)dd.classList.remove('open');
-      if(tr)tr.classList.remove('open');
-    }
+  document.querySelectorAll('.e-ms-dd').forEach(function(dd){
+    if(!dd.parentElement.contains(e.target))dd.classList.remove('open');
   });
 });
+
+eAddCredit();
 </script>
 </body>
 </html>
